@@ -7,9 +7,15 @@
 <body>
     <h1>Tooleap Course Questions</h1>
     <ul>
-    {% for question in course_questions_list %}
-        <li>  Question {{ question.question_text }} Level  {{ question.question_level }}</li>
+    {% for question, answers in questions_dict.items %}
+        Q {{question}} <br>
+            {% for answer in answers %}
+          <form>
+           <input type="radio" name="{{answer}}" value="{{answer}}">  {{answer}}
+           <br>
+            {% endfor %}
     {% endfor %}
-    </ul>
+    <input type="submit" value="Submit">
+    </form>
 </body>
 </html>

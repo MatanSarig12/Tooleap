@@ -17,9 +17,20 @@ def vote(request, question_id):
 
 def course_question(request, course_id):
     course_questions_list = Question.objects.filter(course_id=course_id)
+    questions_dict = {}  ## Will have muliple Question Text and Question Answers
+
+    for question in course_questions_list:
+        #question_answers_list = [] ##Has answers for one question only
+        questions_answers_list = Answer.objects.filter(question_id=question.id)
+        questions_dict[question.question_text] = questions_answers_list
+        #for answer in questions_answers_list:
+        #    question_answers_list.append(answer.answer_text)
+        #questions_dict_arr.append({question.question_text:question_answers_list})
+
+
     template = loader.get_template('quiz/course_questions.html')
     context = {
-        'course_questions_list': course_questions_list,
+        'questions_dict': questions_dict,
     }
     return HttpResponse(template.render(context, request))
 
