@@ -7,14 +7,18 @@
 <body>
     <h1>Tooleap Course Questions</h1>
     <ul>
-    {% for question, answers in questions_dict.items %}
+      {% for question, answers in questions_dict.items %}
         Q {{question}} <br>
-            {% for answer in answers %}
-          <form>
-           <input type="radio" name="{{answer}}" value="{{answer}}">  {{answer}}
-           <br>
-            {% endfor %}
-    {% endfor %}
+            <form method="post"> <!-- check this for original action https://docs.djangoproject.com/en/2.0/intro/tutorial04/ -->
+              {% csrf_token %}
+              {% for answer in answers %}
+                  <input type="radio" name="answer" id="answer{{ forloop.counter }}" value="{{ answer.id }}" />
+                  <label for="answer{{ answer }}">{{ answer }}</label><br>
+              {% endfor %}
+            </form>
+            <br>
+      {% endfor %}
+    <br> <br>
     <input type="submit" value="Submit">
     </form>
 </body>

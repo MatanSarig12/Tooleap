@@ -8,11 +8,17 @@ class Course(models.Model):
     def __str__(self):
         return self.course_name
 
+class Category(models.Model):
+    category_name = models.CharField(max_length=100)
+    category_desc = models.CharField(max_length=500)
+    course_id = models.ForeignKey(Course,  on_delete=models.CASCADE)
+    def __str__(self):
+        return self.category_name
+
 class Question(models.Model):
     question_text = models.CharField(max_length=500)
     course_id = models.ForeignKey(Course,  on_delete=models.CASCADE)
     pub_date = models.DateTimeField('date published')
-    question_category = models.CharField(max_length=100)
     question_level = models.CharField(max_length=20)
     def __str__(self):
         return self.question_text

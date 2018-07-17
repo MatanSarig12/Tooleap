@@ -6,6 +6,10 @@ from .models import Course
 
 admin.site.register(Course)
 
+from .models import Category
+
+admin.site.register(Category)
+
 from .models import Question
 
 admin.site.register(Question)
