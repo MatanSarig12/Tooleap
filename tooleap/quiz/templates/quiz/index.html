@@ -8,7 +8,7 @@
     <h1>Tooleap Course</h1>
     <ul>
     {% for course in courses_list %}
-        <li><a href="/quiz/course/{{course.id}}/questions"> Course Name: {{ course.course_name }} </a> Course Description:  {{ course.course_desc }}</li>
+        <li>Course Name: {{ course.course_name }} | Course Description:  {{ course.course_desc }} <a href="/quiz/course/{{course.id}}/categories">   | Create Quiz  | </a> <a href=#> View Progress </a> </li>
     {% endfor %}
     </ul>
 </body>

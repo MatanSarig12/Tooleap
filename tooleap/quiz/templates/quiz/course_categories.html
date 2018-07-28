@@ -5,11 +5,35 @@
     <title>Tooleap</title>
 </head>
 <body>
-    <h1>Tooleap Course Categories</h1>
-    <ul>
+    <h1>Tooleap - Create Your Quiz</h1>
+    <form method="post" action="quiz_builder.php">
+      <h2> Select Quiz Category (Only One Category) </h2>
     {% for category in course_categories %}
-        <li> Category {{category}} <br> </li>
+        <input type="radio" name="category" id="category{{ forloop.counter }}" value="{{ category.id }}" />
+        <label for="answer{{ category }}">{{ category }}</label><br>
     {% endfor %}
-  </ul>
+    <div>
+      <h2> Select Question Difficulty (You Can Select More Than 1) </h2>
+      <input type="checkbox" name="vehicle" value="hard" checked> Hard <br>
+      <input type="checkbox" name="vehicle" value="medium" checked> Medium <br>
+      <input type="checkbox" name="vehicle" value="low" checked> Easy <br>
+    </div>
+    <br>
+    <div>
+      <h2> Select Number Of Questions </h2>
+      <select name="num_of_qs">
+        <option value="5">5 Questions</option>
+        <option value="10">10 Questions</option>
+        <option value="20">20 Questions</option>
+        <option value="50">50 Questions</option>
+      </select>
+    </div>
+    <br><br><br>
+  <input type="submit" value="Submit">
+</form>
+
+
+
+
 </body>
 </html>
