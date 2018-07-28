@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-
-# Create your views here.
 from django.http import HttpResponse
 from django.template import loader
 from .models import Question, Course, Answer, Category
+from django.views.decorators.csrf import csrf_exempt
+
 
 def detail(request, question_id):
     return HttpResponse("You're looking at question %s." % question_id)
@@ -27,11 +27,13 @@ def course_question(request, course_id):
     }
     return HttpResponse(template.render(context, request))
 
+@csrf_exempt
 def course_categories(request, course_id):
     course_categories = Category.objects.filter(course_id=course_id)
     template = loader.get_template('quiz/course_categories.html')
     context = {
             'course_categories': course_categories,
+            'course_id': course_id,
     }
     return HttpResponse(template.render(context,request))
 
@@ -46,8 +48,17 @@ def index(request):
 
 
 
-def quiz_builder(request):
-    template = loader.get_template('quiz/quiz_builder.php')
-    context ={}
-    
+
+@csrf_exempt
+def custom_quiz(request, course_id):
+    category = request.POST['category']
+    difficulty = request.POST['difficulty']
+    num_of_qs = request.POST['num_of_qs']
+
+    template = loader.get_template('quiz/custom_quiz.html')
+    context = {
+    'custom_category' : category,
+    'custom_difficulty' : difficulty,
+    'custom_num_of_qs' : num_of_qs,
+}
     return HttpResponse(template.render(context, request))
