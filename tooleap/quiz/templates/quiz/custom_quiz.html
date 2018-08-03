@@ -7,11 +7,27 @@
 <body>
     <h1>Tooleap Course</h1>
     <ul>
-      {{user.username}}'s CUSTOM QUIZ for Course {{course_id}} <br> Quiz Category: {{custom_category}} <br>
+      {{user.username}}'s CUSTOM QUIZ for Course {{course_id}} <br> Quiz Category: {{custom_category}} Quiz Category ID: {{category_id}} <br>
       Number of Hard Questions: {{custom_hard}} <br>
       Number of Medium Questions {{custom_medium}} <br>
       Number of Easy Questions: {{custom_easy}} <br>
       Total Number of Questions: {{total_questions}} <br>
     </ul>
+    <h1>Custom Quiz Questions</h1>
+    <ul>
+      {% for question, answers in questions_dict.items %}
+        Q {{question}} <br>
+            <form method="post"> <!-- check this for original action https://docs.djangoproject.com/en/2.0/intro/tutorial04/ -->
+              {% csrf_token %}
+              {% for answer in answers %}
+                  <input type="radio" name="answer" id="answer{{ forloop.counter }}" value="{{ answer.id }}" />
+                  <label for="answer{{ answer }}">{{ answer }}</label><br>
+              {% endfor %}
+            </form>
+            <br>
+      {% endfor %}
+    <br> <br>
+    <input type="submit" value="Submit">
+    </form>
 </body>
 </html>

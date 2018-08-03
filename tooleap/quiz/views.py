@@ -51,18 +51,38 @@ def progress(request, course_id):
 
 @csrf_exempt
 def custom_quiz(request, course_id):
-    category = request.POST['category']
+    category_name = request.POST['category']
     hard = int(request.POST['hard'])
     medium = int(request.POST['medium'])
     easy = int(request.POST['easy'])
     total_number_of_questions = hard + medium + easy
     template = loader.get_template('quiz/custom_quiz.html')
+    category_id = get_category_id_from_name(category_name)
+    questions_list = get_category_questions(category_id)
+    questions_dict = {}  ## Will have muliple Question Text and Question Answers
+    for question in questions_list:
+        questions_answers_list = Answer.objects.filter(question_id=question.id)
+        questions_dict[question.question_text] = questions_answers_list
     context = {
-    'custom_category' : category,
+    'custom_category' : category_name,
     'custom_hard' : hard,
     'custom_medium' : medium,
     'custom_easy' : easy,
     'total_questions': total_number_of_questions,
     'course_id': course_id,
+    'category_id':category_id,
+    'questions_dict':questions_dict,
 }
     return HttpResponse(template.render(context, request))
+
+def get_category_id_from_name (category_name):
+    category_list = Category.objects.filter(category_name=category_name)
+    return category_list[0].id
+
+def get_category_questions(category_id):
+    category_questions_list = Question.objects.filter(category_id=category_id)
+    return category_questions_list
+
+def get_questions_by_difficulty(question_list,difficulty):
+    print ("hello")
+    
