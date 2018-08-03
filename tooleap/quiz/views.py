@@ -39,7 +39,14 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
-
+def progress(request, course_id):
+    course_categories = Category.objects.filter(course_id=course_id)
+    template = loader.get_template('quiz/progress.html')
+    context = {
+            'course_categories': course_categories,
+            'course_id': course_id,
+    }
+    return HttpResponse(template.render(context,request))
 
 
 @csrf_exempt
