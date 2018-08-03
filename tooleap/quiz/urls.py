@@ -9,6 +9,7 @@ urlpatterns = [
     path('course/<int:course_id>/build_quiz', views.quiz_builder, name='course_categories'),
     path('custom_quiz/<int:course_id>/', views.custom_quiz, name='custom_quiz'),
     path('course/<int:course_id>/progress', views.progress, name='progress'),
-    path('course/<int:course_id>/answers', views.answers, name='answers')
+    path('course/<int:course_id>/answers', views.answers, name='answers'),
+    path('auto_generated/<int:course_id>/', views.auto_generated, name='auto_generated'),
 
 ]
