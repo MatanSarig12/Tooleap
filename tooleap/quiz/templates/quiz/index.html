@@ -3,8 +3,7 @@
 <html>
 <head>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
     <meta charset="utf-8">
     <title>Tooleap</title>
 </head>
@@ -14,6 +13,7 @@
     {% for course in courses_list %}
         <li>Course Name: {{ course.course_name }} | Course Description:  {{ course.course_desc }} <a href="/quiz/course/{{course.id}}/build_quiz">   | Create Quiz  | </a> <a href="/quiz/course/{{course.id}}/progress"> View Progress </a>
          <a href="/quiz/course/{{course.id}}/questions"> |  View Questions </a>
+         <a href="/quiz/course/{{course.id}}/answers"> |  View Answers </a>
          </li>
     {% endfor %}
     </ul>

@@ -102,7 +102,17 @@ def get_questions_by_difficulty(question_list,difficulty,num_of_questions):
     questions_for_quiz = questions_by_difficulty[:num_of_questions]
     return questions_for_quiz
 
-
+def answers(request, course_id):
+    course_questions_list = Question.objects.filter(course_id=course_id)
+    questions_dict = {}  ## Will have muliple Question Text and Question Answers
+    for question in course_questions_list:
+        questions_answers_list = Answer.objects.filter(question_id=question.id)
+        questions_dict[question.question_text] = questions_answers_list
+    template = loader.get_template('quiz/answers_page.html')
+    context = {
+        'questions_dict': questions_dict,
+    }
+    return HttpResponse(template.render(context, request))
 
 
     
