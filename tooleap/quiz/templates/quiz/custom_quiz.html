@@ -6,12 +6,16 @@
 </head>
 <body>
     <h1>Tooleap Course</h1>
+    <p> Hi {{ user.username }}! </p>
+    <p><a href="/accounts/logout/">logout</a></p>
+    <p> Tooleap / <a href ="/quiz"> Courses </a> / {{course_name}} / Custom Quiz </p>
     <ul>
-      {{user.username}}'s CUSTOM QUIZ for Course {{course_id}} <br> Quiz Category: {{custom_category}} Quiz Category ID: {{category_id}} <br>
-      Number of Hard Questions: {{custom_hard}} <br>
-      Number of Medium Questions {{custom_medium}} <br>
-      Number of Easy Questions: {{custom_easy}} <br>
+      {{user.username}}'s Custom Quiz for Course {{course_name}} <br>
+      Quiz Category: {{custom_category}} <br>
       Total Number of Questions: {{total_questions}} <br>
+      Number of Hard Questions: {{true_num_hard}}<br>
+      Number of Medium Questions: {{true_num_medium}} <br>
+      Number of Easy Questions: {{true_num_easy}} <br>
     </ul>
     <h1>Custom Quiz Questions</h1>
     <ul>

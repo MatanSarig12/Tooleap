@@ -26,22 +26,36 @@ def course_question(request, course_id):
 @csrf_exempt
 def quiz_builder(request, course_id):
     course_categories = Category.objects.filter(course_id=course_id)
+    course_name = get_course_name(course_id)
     template = loader.get_template('quiz/quiz_builder.html')
     context = {
             'course_categories': course_categories,
             'course_id': course_id,
+            'course_name': course_name,
     }
     return HttpResponse(template.render(context,request))
 
 
 
+def teacher_progress_view(request, course_id):
+    course_categories = Category.objects.filter(course_id=course_id)
+    course_name = get_course_name(course_id)
+    template = loader.get_template('quiz/teacher_progress_view.html')
+    context = {
+            'course_categories': course_categories,
+            'course_id': course_id,
+            'course_name': course_name,
+    }
+    return HttpResponse(template.render(context,request))
 
 def progress(request, course_id):
     course_categories = Category.objects.filter(course_id=course_id)
+    course_name = get_course_name(course_id)
     template = loader.get_template('quiz/progress.html')
     context = {
             'course_categories': course_categories,
             'course_id': course_id,
+            'course_name': course_name,
     }
     return HttpResponse(template.render(context,request))
 
@@ -52,7 +66,7 @@ def custom_quiz(request, course_id):
     num_of_hard = int(request.POST['hard'])
     num_of_medium = int(request.POST['medium'])
     num_of_easy = int(request.POST['easy'])
-    total_number_of_questions = num_of_hard + num_of_medium + num_of_easy
+    course_name = get_course_name(course_id)
     template = loader.get_template('quiz/custom_quiz.html')
     category_id = get_category_id_from_name(category_name)
     questions_list = get_category_questions(category_id)
@@ -62,6 +76,10 @@ def custom_quiz(request, course_id):
     medium_questions = get_questions_by_difficulty(questions_list,'Medium',num_of_hard)
     final_questions_list.extend(medium_questions)
     easy_questions = get_questions_by_difficulty(questions_list,'Easy',num_of_hard)
+    true_num_hard = len(hard_questions)
+    true_num_medium = len(medium_questions)
+    true_num_easy = len(easy_questions)
+    total_number_of_questions = true_num_hard + true_num_medium + true_num_easy
     final_questions_list.extend(easy_questions)
     random.shuffle(final_questions_list)
     questions_dict = {}  ## Will have muliple Question Text and Question Answers
@@ -70,19 +88,21 @@ def custom_quiz(request, course_id):
         questions_dict[question.question_text] = questions_answers_list
     context = {
     'custom_category' : category_name,
-    'custom_hard' : num_of_hard,
-    'custom_medium' : num_of_medium,
-    'custom_easy' : num_of_easy,
+    'true_num_hard' : true_num_hard,
+    'true_num_medium' : true_num_medium,
+    'true_num_easy' : true_num_easy,
     'total_questions': total_number_of_questions,
     'course_id': course_id,
     'category_id':category_id,
     'questions_dict':questions_dict,
+    'course_name': course_name,
 }
     return HttpResponse(template.render(context, request))
 
 @csrf_exempt
 def auto_generated(request, course_id):
     total_number_of_questions = 20 ##TODO Change
+    course_name = get_course_name(course_id)
     template = loader.get_template('quiz/auto_generated_quiz.html')
     course_questions_list = get_course_questions(course_id)
     course_questions_list = list(course_questions_list)
@@ -95,12 +115,17 @@ def auto_generated(request, course_id):
     context = {
     'course_id': course_id,
     'questions_dict':questions_dict,
+    'course_name': course_name,
 }
     return HttpResponse(template.render(context, request))
 
 def get_category_id_from_name (category_name):
     category_list = Category.objects.filter(category_name=category_name)
     return category_list[0].id
+
+def get_course_name(course_id):
+    course = Course.objects.get(id = course_id)
+    return course.course_name
 
 def get_category_questions(category_id):
     category_questions_list = Question.objects.filter(category_id=category_id)
@@ -160,6 +185,35 @@ def add_answer(question, answer_text,answer_explanation,is_right):
 # new_category = add_category('Best Category Ever', 'Category Desc is nice', new_course)
 # new_question = add_question('Any Questions?', new_course, '2018-08-01 19:00:00', 'Hard', new_category)
 # new_answer = add_answer(new_question, 'This is the final answer', 'Nothing to explain', 'true')
+
+def teacher(request):
+    courses_list = Course.objects.all()
+    template = loader.get_template('quiz/teacher_view.html')
+    context = {
+        'courses_list': courses_list,
+    }
+    return HttpResponse(template.render(context, request))
+
+def teacher_add_course(request):
+    template = loader.get_template('quiz/add_course.html')
+    context = {
+    }
+    return HttpResponse(template.render(context, request))
+
+@csrf_exempt
+def course_added(request):
+    new_course_name = request.POST['course_name']
+    new_course_desc = request.POST['course_desc']
+    new_course = add_course(new_course_name,new_course_desc)
+    new_course_id = new_course.id
+    template = loader.get_template('quiz/course_added.html')
+    context = {
+    'course_name': new_course_name,
+    'course_desc': new_course_desc,
+    'new_course': new_course,
+    'course_id': new_course_id,
+    }
+    return HttpResponse(template.render(context, request))
 
 
 def index(request):

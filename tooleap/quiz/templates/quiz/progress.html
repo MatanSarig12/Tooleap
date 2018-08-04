@@ -6,9 +6,15 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <meta charset="utf-8">
   <title>Tooleap - Progress</title>
+
 </head>
 <body>
-    <h1 id="titleProgress">Tooleap Progress for course id: {{course_id}} for {{ user.username }}</h1>
+    <h1 id="titleProgress">Tooleap Progress Page </h1>
+    <p> Hi {{ user.username }}! </p>
+    <p><a href="/accounts/logout/">logout</a></p>
+    <p> Tooleap / <a href ="/quiz"> Courses </a> / {{course_name}} / View Progress </p>
+    <a href="/quiz/auto_generated/{{course.id}}"> | Start Random Quiz </a>
+    <a href="/quiz/course/{{course_id}}/build_quiz">   | Create Quiz  | </a>
     <section id="userimg"> <img src="{% static 'Images/user.png' %} " alt="Smiley face" height="135" width="135"> </section>
     <section class="stat">
       <section id="stat1"> 64 </section>

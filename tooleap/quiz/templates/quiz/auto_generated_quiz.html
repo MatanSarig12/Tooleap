@@ -7,9 +7,11 @@
 <body>
     <h1>Tooleap Course</h1>
     <ul>
-      {{user.username}}'s Auto Generated Quiz for Course {{course_id}} <br>
+      <p> Hi {{ user.username }}! </p>
+      <p><a href="/accounts/logout/">logout</a></p>
+      <p> Tooleap / <a href ="/quiz"> Courses </a> / {{course_name}} / Auto Generated Quiz </p>
     </ul>
-    <h1>Custom Quiz Questions</h1>
+    <h2>Quiz Questions:</h2>
     <ul>
       {% for question, answers in questions_dict.items %}
         Q {{question}} <br>
