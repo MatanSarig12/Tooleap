@@ -119,9 +119,17 @@ def auto_generated(request, course_id):
 }
     return HttpResponse(template.render(context, request))
 
-def get_category_id_from_name (category_name):
-    category_list = Category.objects.filter(category_name=category_name)
-    return category_list[0].id
+def get_category_id_from_name(category_name):
+    print (category_name)
+    try:
+        print("before try")
+        category_list = Category.objects.filter(category_name=category_name)
+        return category_list[0].id
+    except:
+        print("except")
+        return -1
+
+
 
 def get_course_name(course_id):
     course = Course.objects.get(id = course_id)
@@ -129,6 +137,8 @@ def get_course_name(course_id):
 
 def get_category_questions(category_id):
     category_questions_list = Question.objects.filter(category_id=category_id)
+    if category_questions_list is None:
+        return None
     return category_questions_list
 
 def get_course_questions(course_id):
@@ -214,6 +224,33 @@ def course_added(request):
     'course_id': new_course_id,
     }
     return HttpResponse(template.render(context, request))
+
+## CSV Structure: category, cat_desc, question_text, pub_date,question_level, answer_1_text, answer_1_is_right, answer_1_explanation, answer_2_text, answer_2_is_right, answer_2_explanation, answer_3_text, answer_3_is_right, answer_3_explanation,answer_4_text, answer_4_is_right, answer_4_explanation,
+def parse_csv(request, course_id):
+    with open('quiz/static/csv/questions_1.csv') as csvfile:
+        readCSV = csv.reader(csvfile, delimiter=',')
+        course = Course.objects.get(id=course_id)
+        for row in readCSV:
+            print (row[0])
+            category_id = get_category_id_from_name(row[0])
+            if category_id==-1:
+                new_category = add_category(row[0], row[1], course)
+                new_question = add_question(row[2], course, row[3], row[4], new_category)
+            else:
+                category = Category.objects.get(id=category_id)
+                new_question = add_question(row[2], course, row[3], row[4], category)
+            for i in range(0,4):
+                x = 3*i
+                print(str(i)+"parsing answers"+str(x))
+                new_answer = add_answer(new_question, row[4+x],row[6+x],row[5+x])
+                print ("done adding answer")
+
+        template = loader.get_template('quiz/questions_added.html')
+        context = {
+        }
+        return HttpResponse(template.render(context, request))
+
+
 
 
 def index(request):

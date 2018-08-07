@@ -15,4 +15,5 @@ urlpatterns = [
     path('teacher/course/<int:course_id>/progress', views.teacher_progress_view, name='teacher_progress_view'),
     path('teacher/add_course/', views.teacher_add_course, name='teacher_add_course'),
     path('teacher/add_course/course_added', views.course_added, name='course_added'),
+    path('teacher/course/<int:course_id>/parse',views.parse_csv, name ='csv_parse'),
 ]

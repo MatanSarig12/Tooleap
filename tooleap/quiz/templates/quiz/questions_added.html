@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Tooleap {% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  Hi {{ user.username }}!
+  <p>Questions Uploaded Sucessfully <a href="/quiz/teacher"> Back to Teacher View</a></p>
+  <p><a href="{% url 'logout' %}">logout</a></p>
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">login</a>
+{% endif %}
+{% endblock %}

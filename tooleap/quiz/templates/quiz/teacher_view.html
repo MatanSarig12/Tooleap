@@ -18,6 +18,7 @@
   {% for course in courses_list %}
       <li>Course Name: {{ course.course_name }} | Course Description:  {{ course.course_desc }}
         <a href="/quiz/teacher/course/{{course.id}}/progress"> View Progress </a>
+        <a href="/quiz/teacher/course/{{course.id}}/parse"> Add Questions </a>
        </li>
   {% endfor %}
   </ul>
