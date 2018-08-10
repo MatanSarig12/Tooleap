@@ -14,17 +14,18 @@
       Total Number of Questions: {{total_questions}} <br>
     </ul>
     <h1>Custom Quiz Questions</h1>
-    <ul>
+    <ul>  
+      <form method="post" action="/quiz/course/{{course_id}}/answers"> 
       {% for question, answers in questions_dict.items %}
+        <p>
         Q {{question}} <br>
-            <form method="post"> <!-- check this for original action https://docs.djangoproject.com/en/2.0/intro/tutorial04/ -->
               {% csrf_token %}
               {% for answer in answers %}
-                  <input type="radio" name="answer" id="answer{{ forloop.counter }}" value="{{ answer.id }}" />
+                  <input type="radio" name="{{question}}" id="answer{{ forloop.counter }}" value="{{ answer.answer_text }}" />
                   <label for="answer{{ answer }}">{{ answer }}</label><br>
               {% endfor %}
-            </form>
             <br>
+        </p>
       {% endfor %}
     <br> <br>
     <input type="submit" value="Submit">

@@ -103,14 +103,28 @@ def get_questions_by_difficulty(question_list,difficulty,num_of_questions):
     return questions_for_quiz
 
 def answers(request, course_id):
+    marked_answers_from_quiz = {}
+    quiz_checked = {}
+    for arg in request.POST:
+        if arg != 'csrfmiddlewaretoken':
+            marked_answers_from_quiz[arg] = request.POST[arg]
     course_questions_list = Question.objects.filter(course_id=course_id)
+    for answered_question in marked_answers_from_quiz:
+        for quiz_question in course_questions_list:
+            if str(answered_question) == str(quiz_question.question_text):
+                questions_answers_list = Answer.objects.filter(question_id=quiz_question.id)
+                for answer in questions_answers_list:
+                    if answer.is_right == 'true':
+                        right_answer = answer
+                quiz_checked[quiz_question.question_text] = {'student_answer':marked_answers_from_quiz[answered_question],
+                                                       'correct_answer':right_answer.answer_text}
     questions_dict = {}  ## Will have muliple Question Text and Question Answers
     for question in course_questions_list:
         questions_answers_list = Answer.objects.filter(question_id=question.id)
         questions_dict[question.question_text] = questions_answers_list
     template = loader.get_template('quiz/answers_page.html')
     context = {
-        'questions_dict': questions_dict,
+        'questions_dict': quiz_checked,
     }
     return HttpResponse(template.render(context, request))
 

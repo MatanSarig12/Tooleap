@@ -9,10 +9,8 @@
     <ul>
       {% for question, answers in questions_dict.items %}
         Question: {{question}} <br>
-              {% for answer in answers %}
-                  <ul> {{answer}} | Right Answer: {{answer.is_right}} | {{answer_explanation}}
-                  </ul>
-              {% endfor %}
+        Your Answer: {{answers.student_answer}} <br>
+        The Correct Answer Is: {{answers.correct_answer}}<br>
           <br>
       {% endfor %}
     <br> <br>
