@@ -6,7 +6,9 @@
 </head>
 <body>
     <h1>Tooleap - Create Your Quiz</h1>
-
+    <p> Hi {{ user.username }}! </p>
+    <p><a href="/accounts/logout/">logout</a></p>
+    <p> Tooleap / <a href ="/quiz"> Courses </a> / {{course_name}} / Quiz Builder </p>
     <form method="post" action="/quiz/custom_quiz/{{course_id}}/">
     <h2> Select Quiz Category from {{course_id}} (Only One Category) </h2>
     {% for category in course_categories %}

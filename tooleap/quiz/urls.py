@@ -9,6 +9,11 @@ urlpatterns = [
     path('course/<int:course_id>/build_quiz', views.quiz_builder, name='course_categories'),
     path('custom_quiz/<int:course_id>/', views.custom_quiz, name='custom_quiz'),
     path('course/<int:course_id>/progress', views.progress, name='progress'),
-    path('course/<int:course_id>/answers', views.answers, name='answers')
-
+    path('course/<int:course_id>/answers', views.answers, name='answers'),
+    path('auto_generated/<int:course_id>/', views.auto_generated, name='auto_generated'),
+    path('teacher/', views.teacher, name='teacher'),
+    path('teacher/course/<int:course_id>/progress', views.teacher_progress_view, name='teacher_progress_view'),
+    path('teacher/add_course/', views.teacher_add_course, name='teacher_add_course'),
+    path('teacher/add_course/course_added', views.course_added, name='course_added'),
+    path('teacher/course/<int:course_id>/parse',views.parse_csv, name ='csv_parse'),
 ]

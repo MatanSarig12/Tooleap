@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Tooleap</title>
+</head>
+<body>
+    {% if user.is_staff %}
+    <h1>Tooleap - Create New Course</h1>
+    <p> Hi {{ user.username }}! </p>
+    <p><a href="/accounts/logout/">logout</a></p>
+    <p> Tooleap / <a href ="/quiz/teacher"> Courses </a> / Teacher View / New Course </p>
+    <form method="post" action="/quiz/teacher/add_course/course_added">
+    <h2> Please Add New Course </h2>
+    <div>
+      <input type="text" name="course_name" placeholder="Please Enter Course Name" id="course_name" > Course Name: <br>
+      <input type="text" name="course_desc" placeholder="Please Enter Course Description" id="course_desc" > Course Description: <br>
+    </div>
+    <!-- TODO Enter Validations -->
+    <br>
+    <br><br><br>
+  <input type="submit" value="Submit">
+</form>
+{% else %}
+  <p>You are not a teacher you can't add new course </p>
+  <a href="/quiz/">Students</a>
+{% endif %}
+</body>
+</html>

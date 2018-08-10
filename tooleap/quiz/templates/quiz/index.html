@@ -9,11 +9,15 @@
 </head>
 <body>
     <h1>Tooleap Course</h1>
+    <p> Hi {{ user.username }}! </p>
+    <p><a href="/accounts/logout/">logout</a></p>
+    <p> Tooleap / <a href ="/quiz"> Courses </a> / </p>
     <ul>
     {% for course in courses_list %}
         <li>Course Name: {{ course.course_name }} | Course Description:  {{ course.course_desc }} <a href="/quiz/course/{{course.id}}/build_quiz">   | Create Quiz  | </a> <a href="/quiz/course/{{course.id}}/progress"> View Progress </a>
          <a href="/quiz/course/{{course.id}}/questions"> |  View Questions </a>
          <a href="/quiz/course/{{course.id}}/answers"> |  View Answers </a>
+         <a href="/quiz/auto_generated/{{course.id}}"> | Start Random Quiz </a>
          </li>
     {% endfor %}
     </ul>

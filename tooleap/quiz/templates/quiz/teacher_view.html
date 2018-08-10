@@ -1,0 +1,31 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <meta charset="utf-8">
+    <title>Tooleap</title>
+</head>
+<body>
+  {% if user.is_staff %}
+  <h1>Tooleap Course Teacher View</h1>
+  <p> Hi {{ user.username }}! </p>
+  <p><a href="/accounts/logout/">logout</a></p>
+  <p> Tooleap / <a href ="/quiz/teacher"> Courses </a> / Teacher View / </p>
+  <p> <a href="/quiz/teacher/add_course/"> Add New Course </a> </p>
+  <ul>
+  {% for course in courses_list %}
+      <li>Course Name: {{ course.course_name }} | Course Description:  {{ course.course_desc }}
+        <a href="/quiz/teacher/course/{{course.id}}/progress"> View Progress </a>
+        <a href="/quiz/teacher/course/{{course.id}}/parse"> Add Questions </a>
+       </li>
+  {% endfor %}
+  </ul>
+  {% else %}
+    <p>You are not a teacher </p>
+    <a href="/quiz/">Students</a>
+  {% endif %}
+
+</body>
+</html>
