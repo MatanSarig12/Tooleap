@@ -13,16 +13,17 @@
     </ul>
     <h2>Quiz Questions:</h2>
     <ul>
+      <form method="post" action="/quiz/course/{{course_id}}/answers">
       {% for question, answers in questions_dict.items %}
+        <p>
         Q {{question}} <br>
-            <form method="post">
               {% csrf_token %}
               {% for answer in answers %}
-                  <input type="radio" name="answer" id="answer{{ forloop.counter }}" value="{{ answer.id }}" />
+                  <input type="radio" name="{{question}}" id="answer{{ forloop.counter }}" value="{{ answer.answer_text }}" />
                   <label for="answer{{ answer }}">{{ answer }}</label><br>
               {% endfor %}
-            </form>
             <br>
+        </p>
       {% endfor %}
     <br> <br>
     <input type="submit" value="Submit">

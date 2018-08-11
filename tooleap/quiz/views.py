@@ -60,6 +60,8 @@ def progress(request, course_id):
     return HttpResponse(template.render(context,request))
 
 
+
+##TODO Decompose
 @csrf_exempt
 def custom_quiz(request, course_id):
     category_name = request.POST['category']
@@ -99,6 +101,7 @@ def custom_quiz(request, course_id):
 }
     return HttpResponse(template.render(context, request))
 
+##TODO Decompose
 @csrf_exempt
 def auto_generated(request, course_id):
     total_number_of_questions = 20 ##TODO Change
@@ -119,96 +122,21 @@ def auto_generated(request, course_id):
 }
     return HttpResponse(template.render(context, request))
 
-def get_category_id_from_name(category_name):
-    print (category_name)
-    try:
-        print("before try")
-        category_list = Category.objects.filter(category_name=category_name)
-        return category_list[0].id
-    except:
-        print("except")
-        return -1
 
-
-
-def get_course_name(course_id):
-    course = Course.objects.get(id = course_id)
-    return course.course_name
-
-def get_category_questions(category_id):
-    category_questions_list = Question.objects.filter(category_id=category_id)
-    if category_questions_list is None:
-        return None
-    return category_questions_list
-
-def get_course_questions(course_id):
-    course_question_list = Question.objects.filter(course_id=course_id)
-    return course_question_list
-
-def get_questions_by_difficulty(question_list,difficulty,num_of_questions):
-    questions_by_difficulty = []
-    for question in question_list:
-        if question.question_level == difficulty:
-            questions_by_difficulty.append(question)
-    # TODO check greater between num_of_questions and actual quesions exist
-    random.shuffle(questions_by_difficulty)
-    questions_for_quiz = questions_by_difficulty[:num_of_questions]
-    return questions_for_quiz
-
+##TODO Decompose
 def answers(request, course_id):
     marked_answers_from_quiz = {}
     quiz_checked = {}
     for arg in request.POST:
         if arg != 'csrfmiddlewaretoken':
             marked_answers_from_quiz[arg] = request.POST[arg]
-    course_questions_list = Question.objects.filter(course_id=course_id)
-    for answered_question in marked_answers_from_quiz:
-        for quiz_question in course_questions_list:
-            if str(answered_question) == str(quiz_question.question_text):
-                questions_answers_list = Answer.objects.filter(question_id=quiz_question.id)
-                for answer in questions_answers_list:
-                    if answer.is_right == 'true':
-                        right_answer = answer
-                quiz_checked[quiz_question.question_text] = {'student_answer':marked_answers_from_quiz[answered_question],
-                                                       'correct_answer':right_answer.answer_text}
-    questions_dict = {}  ## Will have muliple Question Text and Question Answers
-    for question in course_questions_list:
-        questions_answers_list = Answer.objects.filter(question_id=question.id)
-        questions_dict[question.question_text] = questions_answers_list
+    quiz_checked = check_answer_to_questions(course_id, marked_answers_from_quiz)
     template = loader.get_template('quiz/answers_page.html')
     context = {
         'questions_dict': quiz_checked,
     }
     return HttpResponse(template.render(context, request))
 
-
-##Functions For Saving Items to DB:
-
-def add_course(course_name,course_desc):
-    new_course = Course(course_name=course_name, course_desc = course_desc)
-    new_course.save()
-    return new_course
-
-def add_category(category_name, category_desc, course_id):
-    new_category = Category(category_name=category_name, category_desc=category_desc, course_id=course_id)
-    new_category.save()
-    return new_category
-
-def add_question(question_text, course_id, pub_date, question_level, category_id):
-    new_question = Question(question_text = question_text, course_id = course_id, pub_date = pub_date, question_level = question_level, category_id = category_id)
-    new_question.save()
-    return new_question
-
-def add_answer(question, answer_text,answer_explanation,is_right):
-    new_answer = Answer(question = question, answer_text = answer_text, answer_explanation = answer_explanation, is_right = is_right)
-    new_answer.save()
-    return new_answer
-
-# Code to add new entities
-# new_course = add_course('New Course For All','This is Desc')
-# new_category = add_category('Best Category Ever', 'Category Desc is nice', new_course)
-# new_question = add_question('Any Questions?', new_course, '2018-08-01 19:00:00', 'Hard', new_category)
-# new_answer = add_answer(new_question, 'This is the final answer', 'Nothing to explain', 'true')
 
 def teacher(request):
     courses_list = Course.objects.all()
@@ -240,6 +168,7 @@ def course_added(request):
     return HttpResponse(template.render(context, request))
 
 ## CSV Structure: category, cat_desc, question_text, pub_date,question_level, answer_1_text, answer_1_is_right, answer_1_explanation, answer_2_text, answer_2_is_right, answer_2_explanation, answer_3_text, answer_3_is_right, answer_3_explanation,answer_4_text, answer_4_is_right, answer_4_explanation,
+##TODO Decompose, Add Uploader, and add functionality of n' answers
 def parse_csv(request, course_id):
     with open('quiz/static/csv/questions_1.csv') as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
@@ -255,8 +184,8 @@ def parse_csv(request, course_id):
                 new_question = add_question(row[2], course, row[3], row[4], category)
             for i in range(0,4):
                 x = 3*i
-                print(str(i)+"parsing answers"+str(x))
-                new_answer = add_answer(new_question, row[4+x],row[6+x],row[5+x])
+                print(str(i)+"parsing answers"+str(x) + str(new_question) + str(row[5+x]) + str(row[7+x]) + str(row[6+x]))
+                new_answer = add_answer(new_question, row[5+x],row[7+x],row[6+x])
                 print ("done adding answer")
 
         template = loader.get_template('quiz/questions_added.html')
@@ -274,3 +203,73 @@ def index(request):
         'courses_list': courses_list,
     }
     return HttpResponse(template.render(context, request))
+
+
+###### Functions without HTTP & HTML
+
+def get_category_id_from_name(category_name):
+    print (category_name)
+    try:
+        category_list = Category.objects.filter(category_name=category_name)
+        return category_list[0].id
+    except:
+        return -1
+
+def get_course_name(course_id):
+    course = Course.objects.get(id = course_id)
+    return course.course_name
+
+def get_category_questions(category_id):
+    category_questions_list = Question.objects.filter(category_id=category_id)
+    if category_questions_list is None:
+        return None
+    return category_questions_list
+
+def get_course_questions(course_id):
+    course_question_list = Question.objects.filter(course_id=course_id)
+    return course_question_list
+
+def get_questions_by_difficulty(question_list,difficulty,num_of_questions):
+    questions_by_difficulty = []
+    for question in question_list:
+        if question.question_level == difficulty:
+            questions_by_difficulty.append(question)
+    # TODO check greater between num_of_questions and actual quesions exist
+    random.shuffle(questions_by_difficulty)
+    questions_for_quiz = questions_by_difficulty[:num_of_questions]
+    return questions_for_quiz
+
+def add_course(course_name,course_desc):
+    new_course = Course(course_name=course_name, course_desc = course_desc)
+    new_course.save()
+    return new_course
+
+def add_category(category_name, category_desc, course_id):
+    new_category = Category(category_name=category_name, category_desc=category_desc, course_id=course_id)
+    new_category.save()
+    return new_category
+
+def add_question(question_text, course_id, pub_date, question_level, category_id):
+    new_question = Question(question_text = question_text, course_id = course_id, pub_date = pub_date, question_level = question_level, category_id = category_id)
+    new_question.save()
+    return new_question
+
+def add_answer(question, answer_text,answer_explanation,is_right):
+    new_answer = Answer(question = question, answer_text = answer_text, answer_explanation = answer_explanation, is_right = is_right)
+    new_answer.save()
+    return new_answer
+
+##TODO Make this qork on auto generted quiz
+def check_answer_to_questions(course_id, marked_answers_from_quiz):
+    quiz_checked = {}
+    course_questions_list = Question.objects.filter(course_id=course_id)
+    for answered_question in marked_answers_from_quiz:
+        for quiz_question in course_questions_list:
+            if str(answered_question) == str(quiz_question.question_text):
+                questions_answers_list = Answer.objects.filter(question_id=quiz_question.id)
+                for answer in questions_answers_list:
+                    if answer.is_right == 'true':
+                        right_answer = answer
+                quiz_checked[quiz_question.question_text] = {'student_answer':marked_answers_from_quiz[answered_question],
+                                                       'correct_answer':right_answer.answer_text}
+    return quiz_checked
