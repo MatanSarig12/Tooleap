@@ -194,8 +194,6 @@ def parse_csv(request, course_id):
         return HttpResponse(template.render(context, request))
 
 
-
-
 def index(request):
     courses_list = Course.objects.all()
     template = loader.get_template('quiz/index.html')
@@ -205,7 +203,7 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 
-###### Functions without HTTP & HTML
+###### Functions without Requests & Templates
 
 def get_category_id_from_name(category_name):
     print (category_name)
@@ -259,7 +257,7 @@ def add_answer(question, answer_text,answer_explanation,is_right):
     new_answer.save()
     return new_answer
 
-##TODO Make this qork on auto generted quiz
+##TODO Make this work on auto generted quiz
 def check_answer_to_questions(course_id, marked_answers_from_quiz):
     quiz_checked = {}
     course_questions_list = Question.objects.filter(course_id=course_id)
@@ -268,7 +266,9 @@ def check_answer_to_questions(course_id, marked_answers_from_quiz):
             if str(answered_question) == str(quiz_question.question_text):
                 questions_answers_list = Answer.objects.filter(question_id=quiz_question.id)
                 for answer in questions_answers_list:
-                    if answer.is_right == 'true':
+                    print(str(answer.is_right))
+                    if str(answer.is_right) == ' true':
+                        print('right answer')
                         right_answer = answer
                 quiz_checked[quiz_question.question_text] = {'student_answer':marked_answers_from_quiz[answered_question],
                                                        'correct_answer':right_answer.answer_text}
