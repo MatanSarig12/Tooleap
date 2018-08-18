@@ -89,7 +89,7 @@
                 <!-- /.col-lg-12 -->
 
             <!-- /.row -->
-            
+
                 <div class="col-lg-3 col-md-6">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
@@ -221,7 +221,105 @@
                     <!-- /.panel -->
                 </div>
                 <!-- /.col-lg-6 -->
+  <div id="container"></div>
+  <script src="https://code.highcharts.com/highcharts.src.js"></script>
+  <script>
+  Highcharts.chart('container', {
+      chart: {
+          type: 'column'
+      },
+      title: {
+          text: 'Answers By Category'
+      },
+      xAxis: {
+          categories: [
+            {% for category, answers in answers_per_category.items %}'{{ category }} '{% if not forloop.last %}, {% endif %}{% endfor %}
+          ]
+      },
+      series: [{
+          name: 'Right',
+          data: [
+            {% for category, answers in answers_per_category.items %}{{ answers.right }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          ],
+          color: 'green'
+      }, {
+          name: 'False',
+          data: [
+            {% for category, answers in answers_per_category.items %}{{ answers.false }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          ],
+          color: 'red'
+      }]
+  });
 
+</script>
+
+<div id="container2"></div>
+<script src="https://code.highcharts.com/highcharts.src.js"></script>
+<script>
+
+var arr_dates = []
+var arr_right_ans = []
+var arr_wrong_ans = []
+var arr_right_percentage = []
+
+{% for quiz, answers in answers_per_quiz.items %}
+arr_dates.push("{{answers.quiz_time}}");
+// arr_right_ans.push({{answers.right}});
+// arr_right_ans.push({{answers.false}});
+arr_right_percentage.push({{answers.right}}/({{answers.right}}+{{answers.false}})*100);
+{% endfor %}
+
+
+
+Highcharts.chart('container2', {
+    chart: {
+        type: 'area'
+    },
+    title: {
+        text: 'Progress By Quiz'
+    },
+    subtitle: {
+        text: "Showing Percentage Of Right Answers"
+    },
+    xAxis: {
+        categories: arr_dates,
+        tickmarkPlacement: 'on',
+        title: {
+            enabled: false
+        }
+    },
+    yAxis: {
+        title: {
+            text: 'Percentage Of Right Answers'
+        },
+        labels: {
+            formatter: function () {
+                return this.value;
+            }
+        }
+    },
+    tooltip: {
+        split: true,
+        valueSuffix: '%'
+    },
+    plotOptions: {
+        area: {
+            stacking: 'normal',
+            lineColor: '#666666',
+            lineWidth: 1,
+            marker: {
+                lineWidth: 1,
+                lineColor: '#666666'
+            }
+        }
+    },
+    series: [{
+        name: 'Percentage Of Right Answers',
+        data: arr_right_percentage
+    }]
+});
+
+</script>
     <!-- /#wrapper -->
 
     <!-- jQuery -->
