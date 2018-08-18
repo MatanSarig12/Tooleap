@@ -6,7 +6,7 @@
 </head>
 <body>
     <h1>Tooleap Course</h1>
-    <p> Hi {{ user.username }}! </p>
+    <p> Hi {{ user.id }}! </p>
     <p><a href="/accounts/logout/">logout</a></p>
     <p> Tooleap / <a href ="/quiz"> Courses </a> / {{course_name}} / Custom Quiz </p>
     <ul>
@@ -19,7 +19,7 @@
     </ul>
     <h1>Custom Quiz Questions</h1>
     <ul>  
-      <form method="post" action="/quiz/course/{{course_id}}/answers"> 
+      <form method="post" action="/quiz/course/{{user.id}}/{{course_id}}/answers"> 
       {% for question, answers in questions_dict.items %}
         <p>
         Q {{question}} <br>

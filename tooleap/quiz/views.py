@@ -3,11 +3,14 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
 from django.template import loader
-from .models import Question, Course, Answer, Category
+from .models import Question, Course, Answer, Category, User_Answer, Answered_Quiz
 from django.views.decorators.csrf import csrf_exempt
 from tablib import Dataset
 import random
 import csv
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+#from .forms import UploadFileForm
 
 
 ##This generates html for questions for a given course.
@@ -48,8 +51,11 @@ def teacher_progress_view(request, course_id):
     }
     return HttpResponse(template.render(context,request))
 
-def progress(request, course_id):
+def progress(request, user_id, course_id):
     course_categories = Category.objects.filter(course_id=course_id)
+    course_answers = User_Answer.objects.filter(course_id=course_id,user=user_id)
+    answers_per_quiz = get_user_answers_per_quiz(course_answers)
+    print (answers_per_quiz)
     course_name = get_course_name(course_id)
     template = loader.get_template('quiz/progress.html')
     context = {
@@ -59,7 +65,25 @@ def progress(request, course_id):
     }
     return HttpResponse(template.render(context,request))
 
+def get_user_answers_per_quiz(course_answers):
+    quizes_answeres = {}
+    for answer in course_answers:
+        if answer.quiz_id not in quizes_answeres:
+            quizes_answeres[answer.quiz_id] = {'right':0,'false':0,'quiz_time':answer.quiz_time}
+        if answer.answered_answer_id == answer.right_answer_id:
+            quizes_answeres[answer.quiz_id]['right'] += 1
+        else:
+            quizes_answeres[answer.quiz_id]['false'] += 1
+    return quizes_answeres
 
+def get_user_answers_per_category(course_answers):
+    category_answers = {}
+    for answer in course_answers:
+        print ("CATEGORY")
+        print (Question.objects.get(id=course_id).category_id)
+
+def get_user_answers_per_difficulty(course_answers):
+    return
 
 ##TODO Decompose
 @csrf_exempt
@@ -124,13 +148,14 @@ def auto_generated(request, course_id):
 
 
 ##TODO Decompose
-def answers(request, course_id):
+def answers(request,user_id,course_id):
     marked_answers_from_quiz = {}
     quiz_checked = {}
     for arg in request.POST:
         if arg != 'csrfmiddlewaretoken':
             marked_answers_from_quiz[arg] = request.POST[arg]
-    quiz_checked = check_answer_to_questions(course_id, marked_answers_from_quiz)
+    quiz = add_answered_quiz()
+    quiz_checked = check_answer_to_questions(course_id, marked_answers_from_quiz,user_id,quiz.id)
     template = loader.get_template('quiz/answers_page.html')
     context = {
         'questions_dict': quiz_checked,
@@ -169,12 +194,22 @@ def course_added(request):
 
 ## CSV Structure: category, cat_desc, question_text, pub_date,question_level, answer_1_text, answer_1_is_right, answer_1_explanation, answer_2_text, answer_2_is_right, answer_2_explanation, answer_3_text, answer_3_is_right, answer_3_explanation,answer_4_text, answer_4_is_right, answer_4_explanation,
 ##TODO Decompose, Add Uploader, and add functionality of n' answers
+##TODO Add date as NOW time not not deal with formats.
 def parse_csv(request, course_id):
-    with open('quiz/static/csv/questions_1.csv') as csvfile:
-        readCSV = csv.reader(csvfile, delimiter=',')
-        course = Course.objects.get(id=course_id)
-        for row in readCSV:
-            print (row[0])
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        file = request.FILES['myfile']
+    else:
+        form = UploadFileForm()
+
+    course = Course.objects.get(id=course_id)
+    file_data = file.read().decode("utf-8")
+    lines = []
+    lines = file_data.split("\n")
+
+    for line in lines:
+        row = line.split(",")
+        if(row[0]!=''):
             category_id = get_category_id_from_name(row[0])
             if category_id==-1:
                 new_category = add_category(row[0], row[1], course)
@@ -184,18 +219,17 @@ def parse_csv(request, course_id):
                 new_question = add_question(row[2], course, row[3], row[4], category)
             for i in range(0,4):
                 x = 3*i
-                print(str(i)+"parsing answers"+str(x) + str(new_question) + str(row[5+x]) + str(row[7+x]) + str(row[6+x]))
                 new_answer = add_answer(new_question, row[5+x],row[7+x],row[6+x])
-                print ("done adding answer")
 
-        template = loader.get_template('quiz/questions_added.html')
-        context = {
-        }
-        return HttpResponse(template.render(context, request))
+    template = loader.get_template('quiz/questions_added.html')
+    context = {
+    }
+    return HttpResponse(template.render(context, request))
 
 
 def index(request):
     courses_list = Course.objects.all()
+    print (Course.objects.all())    
     template = loader.get_template('quiz/index.html')
     context = {
         'courses_list': courses_list,
@@ -257,8 +291,18 @@ def add_answer(question, answer_text,answer_explanation,is_right):
     new_answer.save()
     return new_answer
 
-##TODO Make this work on auto generted quiz
-def check_answer_to_questions(course_id, marked_answers_from_quiz):
+def add_user_answer(user_id,question_id,answered_answer_id,right_answer_id,quiz_id,course_id):
+    new_user_answer = User_Answer(question_id = question_id, user = user_id, answered_answer_id = answered_answer_id, right_answer_id = right_answer_id,quiz_id = quiz_id,course_id = course_id)
+    new_user_answer.save()
+
+def add_answered_quiz():
+    new_answered_quiz = Answered_Quiz()
+    new_answered_quiz.save()
+    return new_answered_quiz
+
+
+def check_answer_to_questions(course_id, marked_answers_from_quiz, user_id,quiz_id):
+    print (marked_answers_from_quiz)
     quiz_checked = {}
     course_questions_list = Question.objects.filter(course_id=course_id)
     for answered_question in marked_answers_from_quiz:
@@ -266,10 +310,15 @@ def check_answer_to_questions(course_id, marked_answers_from_quiz):
             if str(answered_question) == str(quiz_question.question_text):
                 questions_answers_list = Answer.objects.filter(question_id=quiz_question.id)
                 for answer in questions_answers_list:
-                    print(str(answer.is_right))
-                    if str(answer.is_right) == ' true':
-                        print('right answer')
+                    if str(answer.is_right) == 'true' or str(answer.is_right) == ' true':
                         right_answer = answer
+                    if answer.answer_text == marked_answers_from_quiz[answered_question]:
+                        answered_answer_id = answer.id
+                add_user_answer(user_id,quiz_question.id,answered_answer_id,right_answer.id,quiz_id,course_id)
+                print ("user_id " + str(user_id))
+                print ("question " + str(quiz_question.id))
+                print ("answered_answer_id " + str(answered_answer_id))
+                print ("right_answer_id " + str(right_answer.id))
                 quiz_checked[quiz_question.question_text] = {'student_answer':marked_answers_from_quiz[answered_question],
                                                        'correct_answer':right_answer.answer_text}
     return quiz_checked
