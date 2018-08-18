@@ -221,7 +221,36 @@
                     <!-- /.panel -->
                 </div>
                 <!-- /.col-lg-6 -->
-
+  <div id="container"></div>
+  <script src="https://code.highcharts.com/highcharts.src.js"></script>
+  <script>
+  Highcharts.chart('container', {
+      chart: {
+          type: 'column'
+      },
+      title: {
+          text: 'Answers By Category'
+      },
+      xAxis: {
+          categories: [
+            {% for category, answers in answers_per_category.items %}'{{ category }} '{% if not forloop.last %}, {% endif %}{% endfor %}
+          ]
+      },
+      series: [{
+          name: 'Right',
+          data: [
+            {% for category, answers in answers_per_category.items %}{{ answers.right }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          ],
+          color: 'green'
+      }, {
+          name: 'False',
+          data: [
+            {% for category, answers in answers_per_category.items %}{{ answers.false }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          ],
+          color: 'red'
+      }]
+  });
+</script>
     <!-- /#wrapper -->
 
     <!-- jQuery -->

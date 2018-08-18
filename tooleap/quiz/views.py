@@ -66,6 +66,9 @@ def progress(request, user_id, course_id):
             'course_categories': course_categories,
             'course_id': course_id,
             'course_name': course_name,
+            'answers_per_category': answers_per_category,
+            'answers_per_quiz': answers_per_quiz,
+            'answers_per_difficulty': answers_per_difficulty,
     }
     return HttpResponse(template.render(context,request))
 
