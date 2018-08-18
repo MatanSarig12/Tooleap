@@ -1,0 +1,24 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <meta charset="utf-8">
+    <title>Tooleap - Upload CSV</title>
+</head>
+<body>
+    <h1>Upload CSV </h1>
+    <p> Hi {{ user.username }}! </p>
+    <p><a href="/accounts/logout/">logout</a></p>
+    <p> Tooleap / <a href ="/quiz"> Courses </a> / </p>
+    <p> Upload Questions and Answers to - Course: {{ course_name }}  </p>
+    <form method="post" enctype="multipart/form-data" action="/quiz/teacher/course/{{course_id}}/parse/">
+        {% csrf_token %}
+        <input type="file" name="myfile">
+        <input type="submit" value="Submit">
+      </form>
+    <p> The structure of the CSV should be: </p>
+    <p> category, category description, question text, date (YYYY-MM-DD),question_level, answer_1_text, answer_1_is_right, answer_1_explanation, answer_2_text, answer_2_is_right, answer_2_explanation, answer_3_text, answer_3_is_right, answer_3_explanation, answer_4_text, answer_4_is_right, answer_4_explanation, </p>
+</body>
+</html>
