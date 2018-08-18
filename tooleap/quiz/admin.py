@@ -17,3 +17,11 @@ admin.site.register(Question)
 from .models import Answer
 
 admin.site.register(Answer)
+
+from .models import User_Answer
+
+admin.site.register(User_Answer)
+
+from .models import Answered_Quiz
+
+admin.site.register(Answered_Quiz)

@@ -31,3 +31,15 @@ class Answer(models.Model):
     is_right = models.CharField(max_length=25) ### TODO: Change to Boolean
     def __str__(self):
         return self.answer_text
+
+class Answered_Quiz(models.Model):
+    quiz_time = models.DateTimeField(auto_now_add=True)
+
+class User_Answer(models.Model):
+    user = models.IntegerField()
+    question_id = models.IntegerField(default=-1)
+    course_id = models.IntegerField(default=-1)
+    answered_answer_id = models.IntegerField(default=-1)
+    right_answer_id = models.IntegerField(default=-1)
+    quiz_time = models.DateTimeField(auto_now_add=True)
+    quiz = models.ForeignKey(Answered_Quiz,on_delete=models.CASCADE,default=-1)

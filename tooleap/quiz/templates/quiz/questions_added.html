@@ -5,7 +5,10 @@
 {% block content %}
 {% if user.is_authenticated %}
   Hi {{ user.username }}!
-  <p>Questions Uploaded Sucessfully <a href="/quiz/teacher"> Back to Teacher View</a></p>
+  <p>Questions Uploaded Sucessfully </p>
+  <p> <a href="/quiz/teacher"> Back to Teacher View</a> |
+      <a href="/quiz/teacher/course/{{course.id}}/add_questions"> Upload Additional Questions via CSV </a>
+  </p>
   <p><a href="{% url 'logout' %}">logout</a></p>
 {% else %}
   <p>You are not logged in</p>
