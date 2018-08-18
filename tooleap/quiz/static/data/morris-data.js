@@ -1,61 +1,33 @@
+
+
 $(function() {
 
     Morris.Area({
         element: 'morris-area-chart',
         data: [{
-            period: '2010 Q1',
-            tax: 3,
-            import: 5,
-            export: 3
+            quizDateTime: '2012-02-17 08:00:00',
+            percentage: 37,
+
         }, {
-            period: '2010 Q2',
-            tax: 4,
-            import: 4,
-            export: 4
+            quizDateTime: '2012-02-18 09:00:00',
+            percentage: 52,
+
         }, {
-            period: '2010 Q3',
-            tax: 6,
-            import: 7,
-            export: 8
+            quizDateTime: '2012-02-21 10:00:00',
+            percentage: 100,
+
         }, {
-            period: '2010 Q4',
-            tax: 12,
-            import: 3,
-            export: 2
+            quizDateTime: '2012-02-22 15:00:00',
+            percentage: 70,
+
         }, {
-            period: '2011 Q1',
-            tax: 5,
-            import: 7,
-            export: 4
-        }, {
-            period: '2011 Q2',
-            tax: 6,
-            import: 4,
-            export: 3
-        }, {
-            period: '2011 Q3',
-            tax: 7,
-            import: 6,
-            export: 11
-        }, {
-            period: '2011 Q4',
-            tax: 12,
-            import: 2,
-            export: 3
-        }, {
-            period: '2012 Q1',
-            tax: 5,
-            import: 2,
-            export: 34
-        }, {
-            period: '2012 Q2',
-            tax: 23,
-            import: 3,
-            export: 1
+            quizDateTime: '2012-02-25 19:00:00',
+            percentage: 23,
+
         }],
-        xkey: 'period',
-        ykeys: ['tax', 'import', 'export'],
-        labels: ['tax', 'import', 'export'],
+        xkey: ['quizDateTime'],
+        ykeys: ['percentage'],
+        labels: ['percentage'],
         pointSize: 2,
         hideHover: 'auto',
         resize: true
@@ -95,15 +67,15 @@ $(function() {
             a: 75,
             b: 65
         }, {
-            y: '2010',
+            y: '2',
             a: 50,
             b: 40
         }, {
-            y: '2011',
+            y: '3',
             a: 75,
             b: 65
         }, {
-            y: '2012',
+            y: '4',
             a: 100,
             b: 90
         }],
@@ -113,5 +85,5 @@ $(function() {
         hideHover: 'auto',
         resize: true
     });
-    
+
 });
