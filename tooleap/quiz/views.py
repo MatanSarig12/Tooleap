@@ -62,12 +62,14 @@ def progress(request, user_id, course_id):
     print (answers_per_difficulty)
     course_name = get_course_name(course_id)
     template = loader.get_template('quiz/progress.html')
+    dates = ['2018-01-01','2018-01-02']
     context = {
             'course_categories': course_categories,
             'course_id': course_id,
             'course_name': course_name,
             'answers_per_category': answers_per_category,
             'answers_per_quiz': answers_per_quiz,
+            'dates':dates,
             'answers_per_difficulty': answers_per_difficulty,
     }
     return HttpResponse(template.render(context,request))
@@ -86,6 +88,13 @@ def get_user_answers_per_quiz(course_answers):
 def get_user_answers_per_category(course_answers):
     category_answers = {}
     for answer in course_answers:
+        print('Printing ANSWER ####')
+        print(answer)
+        print('Printing qid ####')
+        print(answer.question_id)
+        question_text = Question.objects.get(id=answer.question_id).question_text
+        print('Printing q text ####')
+        print(question_text)
         question_category = Question.objects.get(id=answer.question_id).category_id
         if question_category not in category_answers:
             category_answers[question_category] = {'right':0,'false':0}
@@ -183,6 +192,7 @@ def answers(request,user_id,course_id):
     template = loader.get_template('quiz/answers_page.html')
     context = {
         'questions_dict': quiz_checked,
+        'course_id': course_id,
     }
     return HttpResponse(template.render(context, request))
 
@@ -259,7 +269,7 @@ def add_questions_csv(request, course_id):
 
 def index(request):
     courses_list = Course.objects.all()
-    print (Course.objects.all())    
+    print (Course.objects.all())
     template = loader.get_template('quiz/index.html')
     context = {
         'courses_list': courses_list,
