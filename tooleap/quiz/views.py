@@ -10,7 +10,7 @@ import random
 import csv
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
-#from .forms import UploadFileForm
+from .forms import UploadFileForm
 
 
 ##This generates html for questions for a given course.
@@ -55,7 +55,11 @@ def progress(request, user_id, course_id):
     course_categories = Category.objects.filter(course_id=course_id)
     course_answers = User_Answer.objects.filter(course_id=course_id,user=user_id)
     answers_per_quiz = get_user_answers_per_quiz(course_answers)
+    answers_per_category = get_user_answers_per_category(course_answers)
+    answers_per_difficulty = get_user_answers_per_difficulty(course_answers)
     print (answers_per_quiz)
+    print (answers_per_category)
+    print (answers_per_difficulty)
     course_name = get_course_name(course_id)
     template = loader.get_template('quiz/progress.html')
     context = {
@@ -79,11 +83,28 @@ def get_user_answers_per_quiz(course_answers):
 def get_user_answers_per_category(course_answers):
     category_answers = {}
     for answer in course_answers:
-        print ("CATEGORY")
-        print (Question.objects.get(id=course_id).category_id)
+        question_category = Question.objects.get(id=answer.question_id).category_id
+        if question_category not in category_answers:
+            category_answers[question_category] = {'right':0,'false':0}
+        if answer.answered_answer_id == answer.right_answer_id:
+            category_answers[question_category]['right'] += 1
+        else:
+            category_answers[question_category]['false'] += 1
+    return category_answers
+
 
 def get_user_answers_per_difficulty(course_answers):
-    return
+    difficulty_answers = {}
+    for answer in course_answers:
+        question_difficulty = Question.objects.get(id=answer.question_id).question_level
+        if question_difficulty not in difficulty_answers:
+            difficulty_answers[question_difficulty] = {'right':0,'false':0}
+        if answer.answered_answer_id == answer.right_answer_id:
+            difficulty_answers[question_difficulty]['right'] += 1
+        else:
+            difficulty_answers[question_difficulty]['false'] += 1
+    return difficulty_answers
+
 
 ##TODO Decompose
 @csrf_exempt
@@ -226,6 +247,12 @@ def parse_csv(request, course_id):
     }
     return HttpResponse(template.render(context, request))
 
+def add_questions_csv(request, course_id):
+    template = loader.get_template('quiz/add_questions.html')
+    context = {
+            'course_id': course_id,
+    }
+    return HttpResponse(template.render(context,request))
 
 def index(request):
     courses_list = Course.objects.all()
@@ -322,3 +349,10 @@ def check_answer_to_questions(course_id, marked_answers_from_quiz, user_id,quiz_
                 quiz_checked[quiz_question.question_text] = {'student_answer':marked_answers_from_quiz[answered_question],
                                                        'correct_answer':right_answer.answer_text}
     return quiz_checked
+
+def jqueryserver(request):
+    print ("in jqueryserver")
+    response_string="hello"
+    if request.method == 'GET':
+        if request.is_ajax()== True:
+            return HttpResponse(response_string,mimetype='text/plain')
