@@ -57,10 +57,18 @@ def progress(request, user_id, course_id):
     answers_per_quiz = get_user_answers_per_quiz(course_answers)
     answers_per_category = get_user_answers_per_category(course_answers)
     answers_per_difficulty = get_user_answers_per_difficulty(course_answers)
+    print('ANSWER PER DIFFICULTY')
+    print(answers_per_difficulty['Hard'].get('right'))
     print (answers_per_quiz)
     print (answers_per_category)
     print (answers_per_difficulty)
     course_name = get_course_name(course_id)
+    hard_right = answers_per_difficulty['Hard'].get('right')
+    hard_false = answers_per_difficulty['Hard'].get('false')
+    medium_right = answers_per_difficulty['Medium'].get('right')
+    medium_false = answers_per_difficulty['Medium'].get('false')
+    easy_right = answers_per_difficulty['Easy'].get('right')
+    easy_false = answers_per_difficulty['Easy'].get('false')
     template = loader.get_template('quiz/progress.html')
     dates = ['2018-01-01','2018-01-02']
     context = {
@@ -71,6 +79,14 @@ def progress(request, user_id, course_id):
             'answers_per_quiz': answers_per_quiz,
             'dates':dates,
             'answers_per_difficulty': answers_per_difficulty,
+            'hard_right': hard_right,
+            'hard_false': hard_false,
+            'medium_right': medium_right,
+            'medium_false': medium_false,
+            'easy_right': easy_right,
+            'easy_false': easy_false,
+            'all_right': hard_right+medium_right+easy_right,
+            'all_questions': hard_right+medium_right+easy_right+hard_false+medium_false+easy_false,
     }
     return HttpResponse(template.render(context,request))
 
@@ -106,7 +122,7 @@ def get_user_answers_per_category(course_answers):
 
 
 def get_user_answers_per_difficulty(course_answers):
-    difficulty_answers = {}
+    difficulty_answers = {'Hard': {'right': 0, 'false': 0}, 'Easy': {'right': 0, 'false': 0}, 'Medium': {'right': 0, 'false': 0}}
     for answer in course_answers:
         question_difficulty = Question.objects.get(id=answer.question_id).question_level
         if question_difficulty not in difficulty_answers:
@@ -115,9 +131,14 @@ def get_user_answers_per_difficulty(course_answers):
             difficulty_answers[question_difficulty]['right'] += 1
         else:
             difficulty_answers[question_difficulty]['false'] += 1
+    print('###DIFFICULTY###')
+    print(difficulty_answers)
+    print('###DIFFICULTY###')
+
     return difficulty_answers
 
-
+##TODO Multiple categories
+##TODO 0 Questions for some difficulties
 ##TODO Decompose
 @csrf_exempt
 def custom_quiz(request, course_id):
@@ -305,6 +326,7 @@ def get_questions_by_difficulty(question_list,difficulty,num_of_questions):
     questions_by_difficulty = []
     for question in question_list:
         if question.question_level == difficulty:
+            print('IN QUESTION DIFFICULTY' +str(difficulty))
             questions_by_difficulty.append(question)
     # TODO check greater between num_of_questions and actual quesions exist
     random.shuffle(questions_by_difficulty)

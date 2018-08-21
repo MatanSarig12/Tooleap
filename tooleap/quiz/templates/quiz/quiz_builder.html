@@ -1,32 +1,112 @@
+{% load static %}
 <!doctype html>
 <html>
 <head>
     <meta charset="utf-8">
     <title>Tooleap</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- MetisMenu CSS -->
+    <link href="{% static 'vendor/metisMenu/metisMenu.min.css' %}" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{% static 'dist/css/sb-admin-2.css' %}" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
 </head>
 <body>
-    <h1>Tooleap - Create Your Quiz</h1>
-    <p> Hi {{ user.username }}! </p>
-    <p><a href="/accounts/logout/">logout</a></p>
-    <p> Tooleap / <a href ="/quiz"> Courses </a> / {{course_name}} / Quiz Builder </p>
-    <form method="post" action="/quiz/custom_quiz/{{course_id}}/">
-    <h2> Select Quiz Category from {{course_id}} (Only One Category) </h2>
-    {% for category in course_categories %}
-        <input type="radio" name="category" id="category{{ forloop.counter }}" value="{{ category.category_name }}" />
-        <label for="{{ category }}">{{ category }}</label><br>
-    {% endfor %}
-    <div>
-      <h2> Select Number Of Questions In Each Difficulty </h2>
-      <input type="text" name="hard" value="5" id="hard" > Number of Hard Questions <br>
-      <input type="text" name="medium" value="10" id="medium" > Number of Medium Questions <br>
-      <input type="text" name="easy" value="5" id="easy" > Number of Easy Questions<br>
+  <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+      <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href=#>Tooleap Courses</a>
+      </div>
+      <!-- /.navbar-header -->
+
+      <ul class="nav navbar-top-links navbar-right">
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+                <li><a href="/"><i class="fa fa-user fa-fw"></i> Profile</a>
+                </li>
+                <li><a href=""/quiz""><i class="fa fa-gear fa-fw"></i> Courses</a>
+                </li>
+                <li class="divider"></li>
+                <li><a href="/accounts/logout/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                </li>
+            </ul>
+            <!-- /.dropdown-user -->
+        </li>
+              </ul>
+              <!-- /.dropdown-user -->
+          </li>
+          <!-- /.dropdown -->
+      </ul>
+      <!-- /.navbar-top-links -->
+
+  </nav>
+<br>
+
+<form method="post" action="/quiz/custom_quiz/{{course_id}}/">
+    <div class="col-lg-6">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+              Select Quiz Category from {{course_id}} (Only One Category)
+            </div>
+            <div class="panel-body">
+
+              {% for category in course_categories %}
+                  <input type="radio" name="category" id="category{{ forloop.counter }}" value="{{ category.category_name }}" />
+                  <label for="{{ category }}">{{ category }}</label><br>
+              {% endfor %}
+
+              <!-- TODO Enter Validations -->
+              <br>
+            </div>
+
+        </div>
     </div>
-    <!-- TODO Enter Validations -->
-    <br>
 
-    <br><br><br>
-  <input type="submit" value="Submit">
-</form>
+<div class="col-lg-6">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+           Select Number Of Questions In Each Difficulty
+        </div>
+        <div class="panel-body">
 
+          <div>
+
+            <input type="text" name="hard" value="5" id="hard" > Number of Hard Questions <br>
+            <input type="text" name="medium" value="10" id="medium" > Number of Medium Questions <br>
+            <input type="text" name="easy" value="5" id="easy" > Number of Easy Questions<br>
+          </div>
+          <br>
+
+        </div>
+
+    </div><br>
+  <input type="submit" value="Create Quiz" class="btn btn-outline btn-success">
+</div>
+
+  </form>
+
+
+
+
+
+
+<!-- jQuery -->
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap Core JavaScript -->
+<script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+<!-- Metis Menu Plugin JavaScript -->
+<script src="{% static 'vendor/metisMenu/metisMenu.min.js' %}"></script>
+<!-- Custom Theme JavaScript -->
+<script src="{% static 'dist/js/sb-admin-2.js' %}"></script>
 </body>
 </html>

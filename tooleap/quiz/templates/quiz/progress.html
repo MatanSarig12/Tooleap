@@ -51,7 +51,7 @@
                     <span class="icon-bar"></span>
                 </button>
 					<a href="/quiz/course/{{course_id}}/build_quiz"><button type="button" class="btn btn-primary">Create Quiz</button></>
-				  <a href="/quiz/auto_generated/{{course.id}}">	<button type="button" class="btn btn-primary">     Start Random Quiz </button> </a>
+				  <a href="/quiz/auto_generated/{{course_id}}">	<button type="button" class="btn btn-primary">     Start Random Quiz </button> </a>
 
           <a class="navbar-brand" href="index.html">Tooleap Progress Page</a>
             </div>
@@ -98,7 +98,7 @@
                                     <i class="fa fa-check-circle fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div class="huge">26/45</div>
+                                    <div class="huge">{{all_right}}/{{all_questions}}</div>
                                     <div> Right Answers</div>
                                 </div>
                             </div>
@@ -181,78 +181,53 @@
 
             <!-- /.row -->
 
-                <div class="col-lg-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> Area Chart Example
-
-                        </div>
+            <div class="col-lg-12">
+                             <div class="panel panel-default">
+                                 <div class="panel-heading">
+                                     Category Distribution
+                                 </div>
                         <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div id="morris-area-chart"></div>
-                        </div>
-                        <!-- /.panel-body -->
-                    </div>
-                    <!-- /.panel -->
+                        <div id="container1"></div>
+                        <script src="https://code.highcharts.com/highcharts.src.js"></script>
+                        <script>
+                        Highcharts.chart('container1', {
+                            chart: {
+                                type: 'column'
+                            },
+                            title: {
+                                text: 'Answers By Category'
+                            },
+                            xAxis: {
+                                categories: [
+                                  {% for category, answers in answers_per_category.items %}'{{ category }} '{% if not forloop.last %}, {% endif %}{% endfor %}
+                                ]
+                            },
+                            series: [{
+                                name: 'Right',
+                                data: [
+                                  {% for category, answers in answers_per_category.items %}{{ answers.right }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                ],
+                                color: 'green'
+                            }, {
+                                name: 'False',
+                                data: [
+                                  {% for category, answers in answers_per_category.items %}{{ answers.false }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                ],
+                                color: 'red'
+                            }]
+                        });
 
-
-
-                <!-- /.col-lg-8 -->
-
-            <!-- /.row -->
-        </div>
-        <!-- /#page-wrapper -->
-
-
-
-	 <div class="col-lg-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            Bar Chart Example
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div class="flot-chart">
-                                <div class="flot-chart-content" id="flot-bar-chart"></div>
-                            </div>
-                        </div>
-                        <!-- /.panel-body -->
+                      </script>
                     </div>
                     <!-- /.panel -->
                 </div>
+
                 <!-- /.col-lg-6 -->
-  <div id="container"></div>
-  <script src="https://code.highcharts.com/highcharts.src.js"></script>
-  <script>
-  Highcharts.chart('container', {
-      chart: {
-          type: 'column'
-      },
-      title: {
-          text: 'Answers By Category'
-      },
-      xAxis: {
-          categories: [
-            {% for category, answers in answers_per_category.items %}'{{ category }} '{% if not forloop.last %}, {% endif %}{% endfor %}
-          ]
-      },
-      series: [{
-          name: 'Right',
-          data: [
-            {% for category, answers in answers_per_category.items %}{{ answers.right }}{% if not forloop.last %}, {% endif %}{% endfor %}
-          ],
-          color: 'green'
-      }, {
-          name: 'False',
-          data: [
-            {% for category, answers in answers_per_category.items %}{{ answers.false }}{% if not forloop.last %}, {% endif %}{% endfor %}
-          ],
-          color: 'red'
-      }]
-  });
-
-</script>
-
+<div class="col-lg-12">
+<div class="panel panel-default">
+<div class="panel-heading">
+Quiz Progress
+</div>
 <div id="container2"></div>
 <script src="https://code.highcharts.com/highcharts.src.js"></script>
 <script>
@@ -320,6 +295,174 @@ Highcharts.chart('container2', {
 });
 
 </script>
+</div>
+</div>
+
+
+<div class="col-lg-12">
+                 <div class="panel panel-default">
+                     <div class="panel-heading">
+                         Hard Quesions Answer Distribution
+                     </div>
+<div id="container3"></div>
+<script src="https://code.highcharts.com/highcharts.src.js"></script>
+<script>
+var hard_right = {{hard_right}};
+var hard_false = {{hard_false}};
+
+
+
+Highcharts.chart('container3', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: 0,
+        plotShadow: false
+    },
+    title: {
+        text: 'Question Level: <br>Hard<br>',
+        align: 'center',
+        verticalAlign: 'middle',
+        y: 40
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    plotOptions: {
+        pie: {
+            dataLabels: {
+                enabled: true,
+                distance: -50,
+                style: {
+                    fontWeight: 'bold',
+                    color: 'white'
+                }
+            },
+            startAngle: -90,
+            endAngle: 90,
+            center: ['50%', '75%']
+        }
+    },
+    series: [{
+        type: 'pie',
+        name: 'Question Level: Hard',
+        innerSize: '50%',
+        data: [
+            ['Right', hard_right],
+            ['Wrong', hard_false]
+        ]
+    }]
+});
+</script>
+ </div>
+  </div>
+
+  <div class="col-lg-12">
+                   <div class="panel panel-default">
+                       <div class="panel-heading">
+                           Medium Quesions Answer Distribution Distribution
+                       </div>
+<div id="container4"></div>
+<script src="https://code.highcharts.com/highcharts.src.js"></script>
+<script>
+var medium_right = {{medium_right}};
+var medium_false = {{medium_false}};
+Highcharts.chart('container4', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: 0,
+        plotShadow: false
+    },
+    title: {
+        text: 'Question Level: <br>Medium<br>',
+        align: 'center',
+        verticalAlign: 'middle',
+        y: 40
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    plotOptions: {
+        pie: {
+            dataLabels: {
+                enabled: true,
+                distance: -50,
+                style: {
+                    fontWeight: 'bold',
+                    color: 'white'
+                }
+            },
+            startAngle: -90,
+            endAngle: 90,
+            center: ['50%', '75%']
+        }
+    },
+    series: [{
+        type: 'pie',
+        name: 'Question Level: Medium',
+        innerSize: '50%',
+        data: [
+            ['Right', medium_right],
+            ['Wrong', medium_false]
+        ]
+    }]
+});
+</script>
+</div>
+</div>
+
+<div class="col-lg-12">
+                 <div class="panel panel-default">
+                     <div class="panel-heading">
+                         Easy Quesions Answer Distribution
+                     </div>
+<div id="container5"></div>
+<script src="https://code.highcharts.com/highcharts.src.js"></script>
+<script>
+var easy_right = {{easy_right}};
+var easy_false = {{easy_false}};
+Highcharts.chart('container5', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: 0,
+        plotShadow: false
+    },
+    title: {
+        text: 'Question Level: <br>Easy<br>',
+        align: 'center',
+        verticalAlign: 'middle',
+        y: 40
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    plotOptions: {
+        pie: {
+            dataLabels: {
+                enabled: true,
+                distance: -50,
+                style: {
+                    fontWeight: 'bold',
+                    color: 'white'
+                }
+            },
+            startAngle: -90,
+            endAngle: 90,
+            center: ['50%', '75%']
+        }
+    },
+    series: [{
+        type: 'pie',
+        name: 'Question Level: Easy',
+        innerSize: '50%',
+        data: [
+            ['Right', easy_right],
+            ['Wrong', easy_false]
+        ]
+    }]
+});
+</script>
+</div>
+</div>
     <!-- /#wrapper -->
 
     <!-- jQuery -->
