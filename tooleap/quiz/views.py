@@ -53,15 +53,12 @@ def teacher_progress_view(request, course_id):
 
 def progress(request, user_id, course_id):
     course_categories = Category.objects.filter(course_id=course_id)
+    course_questions = Question.objects.filter(course_id=course_id)
+    total_number_of_course_questions = len(course_questions)
     course_answers = User_Answer.objects.filter(course_id=course_id,user=user_id)
     answers_per_quiz = get_user_answers_per_quiz(course_answers)
     answers_per_category = get_user_answers_per_category(course_answers)
     answers_per_difficulty = get_user_answers_per_difficulty(course_answers)
-    print('ANSWER PER DIFFICULTY')
-    print(answers_per_difficulty['Hard'].get('right'))
-    print (answers_per_quiz)
-    print (answers_per_category)
-    print (answers_per_difficulty)
     course_name = get_course_name(course_id)
     hard_right = answers_per_difficulty['Hard'].get('right')
     hard_false = answers_per_difficulty['Hard'].get('false')
@@ -69,6 +66,33 @@ def progress(request, user_id, course_id):
     medium_false = answers_per_difficulty['Medium'].get('false')
     easy_right = answers_per_difficulty['Easy'].get('right')
     easy_false = answers_per_difficulty['Easy'].get('false')
+    all_right = hard_right+medium_right+easy_right
+    all_questions = hard_right+medium_right+easy_right+hard_false+medium_false+easy_false
+    if total_number_of_course_questions == 0:
+        tooleap_level = 0
+    elif all_right/total_number_of_course_questions <= 0.33:
+        tooleap_level = 1
+    elif all_right/total_number_of_course_questions <= 0.66:
+        tooleap_level = 2
+    else:
+        tooleap_level = 3
+
+    is_answered = 0
+    unique_user_questions = []
+    if len(course_answers) != 0:
+        unique_user_questions.append(course_answers[0].question_id)
+        for user_question in course_answers:
+            is_answered = 0
+            for unique in unique_user_questions:
+                if unique ==  user_question.question_id:
+                    is_answered = 1
+
+            if is_answered == 0:
+                unique_user_questions.append(user_question.question_id)
+
+    user_unsolved_questions_count =len(course_questions) - len(unique_user_questions)
+
+
     template = loader.get_template('quiz/progress.html')
     dates = ['2018-01-01','2018-01-02']
     context = {
@@ -85,8 +109,11 @@ def progress(request, user_id, course_id):
             'medium_false': medium_false,
             'easy_right': easy_right,
             'easy_false': easy_false,
-            'all_right': hard_right+medium_right+easy_right,
-            'all_questions': hard_right+medium_right+easy_right+hard_false+medium_false+easy_false,
+            'all_right': all_right,
+            'all_questions': all_questions,
+            'tooleap_level': tooleap_level,
+            'total_number_of_course_questions': total_number_of_course_questions,
+            'user_unsolved_questions_count': user_unsolved_questions_count,
     }
     return HttpResponse(template.render(context,request))
 
@@ -104,13 +131,7 @@ def get_user_answers_per_quiz(course_answers):
 def get_user_answers_per_category(course_answers):
     category_answers = {}
     for answer in course_answers:
-        print('Printing ANSWER ####')
-        print(answer)
-        print('Printing qid ####')
-        print(answer.question_id)
         question_text = Question.objects.get(id=answer.question_id).question_text
-        print('Printing q text ####')
-        print(question_text)
         question_category = Question.objects.get(id=answer.question_id).category_id
         if question_category not in category_answers:
             category_answers[question_category] = {'right':0,'false':0}
@@ -131,9 +152,6 @@ def get_user_answers_per_difficulty(course_answers):
             difficulty_answers[question_difficulty]['right'] += 1
         else:
             difficulty_answers[question_difficulty]['false'] += 1
-    print('###DIFFICULTY###')
-    print(difficulty_answers)
-    print('###DIFFICULTY###')
 
     return difficulty_answers
 
@@ -290,7 +308,6 @@ def add_questions_csv(request, course_id):
 
 def index(request):
     courses_list = Course.objects.all()
-    print (Course.objects.all())
     template = loader.get_template('quiz/index.html')
     context = {
         'courses_list': courses_list,
@@ -301,7 +318,6 @@ def index(request):
 ###### Functions without Requests & Templates
 
 def get_category_id_from_name(category_name):
-    print (category_name)
     try:
         category_list = Category.objects.filter(category_name=category_name)
         return category_list[0].id
@@ -326,7 +342,6 @@ def get_questions_by_difficulty(question_list,difficulty,num_of_questions):
     questions_by_difficulty = []
     for question in question_list:
         if question.question_level == difficulty:
-            print('IN QUESTION DIFFICULTY' +str(difficulty))
             questions_by_difficulty.append(question)
     # TODO check greater between num_of_questions and actual quesions exist
     random.shuffle(questions_by_difficulty)
@@ -364,7 +379,6 @@ def add_answered_quiz():
 
 
 def check_answer_to_questions(course_id, marked_answers_from_quiz, user_id,quiz_id):
-    print (marked_answers_from_quiz)
     quiz_checked = {}
     course_questions_list = Question.objects.filter(course_id=course_id)
     for answered_question in marked_answers_from_quiz:
@@ -377,10 +391,6 @@ def check_answer_to_questions(course_id, marked_answers_from_quiz, user_id,quiz_
                     if answer.answer_text == marked_answers_from_quiz[answered_question]:
                         answered_answer_id = answer.id
                 add_user_answer(user_id,quiz_question.id,answered_answer_id,right_answer.id,quiz_id,course_id)
-                print ("user_id " + str(user_id))
-                print ("question " + str(quiz_question.id))
-                print ("answered_answer_id " + str(answered_answer_id))
-                print ("right_answer_id " + str(right_answer.id))
                 quiz_checked[quiz_question.question_text] = {'student_answer':marked_answers_from_quiz[answered_question],
                                                        'correct_answer':right_answer.answer_text}
     return quiz_checked
