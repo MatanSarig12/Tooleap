@@ -38,16 +38,70 @@ def quiz_builder(request, course_id):
     }
     return HttpResponse(template.render(context,request))
 
+def get_unique_students_with_answers_in_course(course_id):
+    course_user_answers = User_Answer.objects.filter(course_id=course_id)
+    unique_users_array = []
+    user_exists = 0
+    if len(course_user_answers) > 0:
+        unique_users_array.append(course_user_answers[0].user)
+        for course_user_answer in course_user_answers:
+            user_exists = 0
+            for unique_user in unique_users_array:
+                if unique_user == course_user_answer.user:
+                    user_exists = 1
+            if user_exists == 0:
+                unique_users_array.append(course_user_answer.user)
+
+    return unique_users_array
+
+def check_unique_students_with_answers_in_course(course_id):
+    course_user_answers = User_Answer.objects.filter(course_id=course_id)
+    print(course_user_answers)
+    print(course_user_answers[0].user)
+    unique_users_array = []
+    user_exists = 0
+    if len(course_user_answers) > 0:
+        unique_users_array.append(course_user_answers[0].user)
+        for course_user_answer in course_user_answers:
+            user_exists = 0
+            for unique_user in unique_users_array:
+                if unique_user == course_user_answer.user:
+                    user_exists = 1
+            if user_exists == 0:
+                unique_users_array.append(course_user_answer.user)
+
+    return len(unique_users_array)
+
+def get_number_of_course_questions(course_id):
+    course_questions = get_course_questions(course_id)
+    return len(course_questions)
+
+def get_worst_users_list(course_id):
+    ### Dict {user_id: user, num_of_right_answers: num_of_right_answers, num_of_wrong_answers: num_of_wrong_answers, right_answers_percentage: right_answers_percentage, last_log_in: last_log_in}
+    unique_users_array = get_unique_students_with_answers_in_course(course_id)
+    print(unique_users_array)
+    user_detail_list = {}
+    worst_users_list = {}
+    for unique_user in unique_users_array:
+        user_detail_list.update({'user_id': unique_user})
+        user_detail_list.update({'user_right_answers': 10})
+    print(user_detail_list)
+    return 0
 
 
 def teacher_progress_view(request, course_id):
     course_categories = Category.objects.filter(course_id=course_id)
+    number_of_students_that_started_answering_questions_in_course = check_unique_students_with_answers_in_course(course_id)
+    number_of_course_questions = get_number_of_course_questions(course_id)
     course_name = get_course_name(course_id)
+    worst_users_list = get_worst_users_list(course_id)
     template = loader.get_template('quiz/teacher_progress_view.html')
     context = {
             'course_categories': course_categories,
             'course_id': course_id,
             'course_name': course_name,
+            'number_of_students_that_started_answering_questions_in_course': number_of_students_that_started_answering_questions_in_course,
+            'number_of_course_questions': number_of_course_questions,
     }
     return HttpResponse(template.render(context,request))
 
@@ -394,6 +448,8 @@ def check_answer_to_questions(course_id, marked_answers_from_quiz, user_id,quiz_
                 quiz_checked[quiz_question.question_text] = {'student_answer':marked_answers_from_quiz[answered_question],
                                                        'correct_answer':right_answer.answer_text}
     return quiz_checked
+
+
 
 def jqueryserver(request):
     print ("in jqueryserver")
