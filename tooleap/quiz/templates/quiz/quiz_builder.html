@@ -61,7 +61,7 @@
             <div class="panel-body">
 
               {% for category in course_categories %}
-                  <input type="radio" name="category" id="category{{ forloop.counter }}" value="{{ category.category_name }}" />
+                  <input type="radio" name="{{ category.category_name }}" id="category{{ forloop.counter }}" value="{{ category.category_name }}" />
                   <label for="{{ category }}">{{ category }}</label><br>
               {% endfor %}
 
@@ -81,9 +81,9 @@
 
           <div>
 
-            <input type="text" name="hard" value="5" id="hard" > Number of Hard Questions <br>
-            <input type="text" name="medium" value="10" id="medium" > Number of Medium Questions <br>
-            <input type="text" name="easy" value="5" id="easy" > Number of Easy Questions<br>
+            <input type="text" name="hard" value="3" id="hard" > Number of Hard Questions <br>
+            <input type="text" name="medium" value="3" id="medium" > Number of Medium Questions <br>
+            <input type="text" name="easy" value="3" id="easy" > Number of Easy Questions<br>
           </div>
           <br>
 

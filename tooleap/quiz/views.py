@@ -214,35 +214,46 @@ def get_user_answers_per_difficulty(course_answers):
 ##TODO Decompose
 @csrf_exempt
 def custom_quiz(request, course_id):
-    category_name = request.POST['category']
+    categories = []
+    course_categories = Category.objects.filter(course_id=course_id)
+    for course_category in course_categories:
+        try:
+            categories.append(request.POST[course_category.category_name])
+        except:
+            continue
+    print (categories)
     num_of_hard = int(request.POST['hard'])
     num_of_medium = int(request.POST['medium'])
     num_of_easy = int(request.POST['easy'])
     course_name = get_course_name(course_id)
     template = loader.get_template('quiz/custom_quiz.html')
-    category_id = get_category_id_from_name(category_name)
-    questions_list = get_category_questions(category_id)
     final_questions_list = []
-    hard_questions = get_questions_by_difficulty(questions_list,'Hard',num_of_hard)
-    final_questions_list.extend(hard_questions)
-    medium_questions = get_questions_by_difficulty(questions_list,'Medium',num_of_hard)
-    final_questions_list.extend(medium_questions)
-    easy_questions = get_questions_by_difficulty(questions_list,'Easy',num_of_hard)
-    true_num_hard = len(hard_questions)
-    true_num_medium = len(medium_questions)
-    true_num_easy = len(easy_questions)
-    total_number_of_questions = true_num_hard + true_num_medium + true_num_easy
-    final_questions_list.extend(easy_questions)
+    total_number_of_easy_questions = 0
+    total_number_of_medium_questions = 0
+    total_number_of_hard_questions = 0
+    for category in categories:
+        category_id = get_category_id_from_name(category)
+        questions_list = get_category_questions(category_id)
+        hard_questions = get_questions_by_difficulty(questions_list,'Hard',num_of_hard)
+        final_questions_list.extend(hard_questions)
+        medium_questions = get_questions_by_difficulty(questions_list,'Medium',num_of_hard)
+        final_questions_list.extend(medium_questions)
+        easy_questions = get_questions_by_difficulty(questions_list,'Easy',num_of_hard)
+        final_questions_list.extend(easy_questions)
+        total_number_of_easy_questions += len(easy_questions)
+        total_number_of_medium_questions += len(medium_questions)
+        total_number_of_hard_questions += len(hard_questions)
+    total_number_of_questions = total_number_of_easy_questions + total_number_of_medium_questions + total_number_of_hard_questions
     random.shuffle(final_questions_list)
     questions_dict = {}  ## Will have muliple Question Text and Question Answers
     for question in final_questions_list:
         questions_answers_list = Answer.objects.filter(question_id=question.id)
         questions_dict[question.question_text] = questions_answers_list
     context = {
-    'custom_category' : category_name,
-    'true_num_hard' : true_num_hard,
-    'true_num_medium' : true_num_medium,
-    'true_num_easy' : true_num_easy,
+    'custom_categories' : ','.join(categories),
+    'true_num_hard' : total_number_of_hard_questions,
+    'true_num_medium' : total_number_of_medium_questions,
+    'true_num_easy' : total_number_of_easy_questions,
     'total_questions': total_number_of_questions,
     'course_id': course_id,
     'category_id':category_id,
