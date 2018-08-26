@@ -44,7 +44,7 @@
         <th onclick="sortTable(3)">Right Percentage</th>
         <th>Last Login</th>
       </tr>
-      {% for user, details in worst_users_dict.items %}
+      {% for user, details in users_details_dict.items %}
       {% csrf_token %}
       <tr>
           <td>{{details.user_name}} </td>
@@ -57,6 +57,47 @@
       {% endfor %}
     </table>
 
+
+    <div class="col-lg-12">
+                     <div class="panel panel-default">
+                         <div class="panel-heading">
+                             Category Distribution
+                         </div>
+                <!-- /.panel-heading -->
+                <div id="container1"></div>
+                <script src="https://code.highcharts.com/highcharts.src.js"></script>
+                <script>
+                Highcharts.chart('container1', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: 'Answers By Category'
+                    },
+                    xAxis: {
+                        categories: [
+                          {% for category, answers in answers_per_category.items %}'{{ category }} '{% if not forloop.last %}, {% endif %}{% endfor %}
+                        ]
+                    },
+                    series: [{
+                        name: 'Right',
+                        data: [
+                          {% for category, answers in answers_per_category.items %}{{ answers.right }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        ],
+                        color: 'green'
+                    }, {
+                        name: 'False',
+                        data: [
+                          {% for category, answers in answers_per_category.items %}{{ answers.false }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        ],
+                        color: 'red'
+                    }]
+                });
+
+              </script>
+            </div>
+            <!-- /.panel -->
+        </div>
 
 
 

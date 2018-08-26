@@ -13,7 +13,8 @@ from django.core.files.storage import FileSystemStorage
 from .forms import UploadFileForm
 from collections import namedtuple
 from django.contrib.auth.models import User
-
+from datetime import datetime
+from datetime import timedelta
 
 ##This generates html for questions for a given course.
 def course_question(request, course_id):
@@ -58,8 +59,6 @@ def get_unique_students_with_answers_in_course(course_id):
 
 def check_unique_students_with_answers_in_course(course_id):
     course_user_answers = User_Answer.objects.filter(course_id=course_id)
-    print(course_user_answers)
-    print(course_user_answers[0].user)
     unique_users_array = []
     user_exists = 0
     if len(course_user_answers) > 0:
@@ -82,16 +81,15 @@ def get_user_name(user_id):
     user = User.objects.get(id = user_id)
     return user.username
 
+def get_user_last_login(user_id):
+    user = User.objects.get(id = user_id)
+    return user.last_login
+
 def get_user_percentile(user_id, course_id):
     user_details = get_users_details(course_id)
-    print('IN PERCENTILE')
-    print(user_details)
     grades = []
     this_user_grade = 0
     for user in user_details:
-        print('##PERCENTILE FOR##')
-        print(user_details[user])
-        print(user_details[user]['right_percentage'])
         if user_id == user:
             this_user_grade = user_details[user]['right_percentage']
         else:
@@ -110,20 +108,12 @@ def get_user_percentile(user_id, course_id):
 
 
 def get_users_details(course_id):
-    ### Dict {user_id: user, num_of_right_answers: num_of_right_answers, num_of_wrong_answers: num_of_wrong_answers, right_answers_percentage: right_answers_percentage, last_log_in: last_log_in}
     unique_users_array = get_unique_students_with_answers_in_course(course_id)
-    print(unique_users_array)
-    user_detail_list = {}
-    worst_users_list = []
-    worst_users_dict = {}
+    user_details_dict = {}
 
     for unique_user in unique_users_array:
-        print('##IN FOR UNIQUE:##')
-        print(unique_user)
         course_answers = User_Answer.objects.filter(course_id=course_id,user=unique_user)
-        user_detail_list.update({'user_id': unique_user})
         user_name = get_user_name(unique_user)
-        user_detail_list.update({'user_name': user_name})
         answers_per_difficulty = get_user_answers_per_difficulty(course_answers)
         hard_right = answers_per_difficulty['Hard'].get('right')
         hard_false = answers_per_difficulty['Hard'].get('false')
@@ -133,20 +123,10 @@ def get_users_details(course_id):
         easy_false = answers_per_difficulty['Easy'].get('false')
         all_right = hard_right+medium_right+easy_right
         all_questions = hard_right+medium_right+easy_right+hard_false+medium_false+easy_false
-        user_detail_list.update({'user_right_answers': all_right})
-        user_detail_list.update({'user_wrong_answers': all_questions - all_right})
-        user_detail_list.update({'user_right_percentage': all_right/all_questions})
-        user_detail_list.update({'user_last_log_in': '2018-09-09 20:00'})
-        print('###USER DETAILS LIST:###')
-        print(user_detail_list)
+        login = get_user_last_login(unique_user)
+        user_details_dict[unique_user] = {'user_name': user_name, 'right_answers': all_right, 'wrong_answers': all_questions - all_right, 'right_percentage':all_right/all_questions, 'recent_log_in': login}
 
-        worst_users_dict[unique_user] = {'user_name': user_name, 'right_answers': all_right, 'wrong_answers': all_questions - all_right, 'right_percentage':all_right/all_questions, 'recent_log_in': '2018-09-09 20:00'}
-
-    print('##WORST USERS DICT:##')
-    print(worst_users_dict)
-
-    print('##RETURN##')
-    return worst_users_dict
+    return user_details_dict
 
 
 def teacher_progress_view(request, course_id):
@@ -154,9 +134,10 @@ def teacher_progress_view(request, course_id):
     number_of_students_that_started_answering_questions_in_course = check_unique_students_with_answers_in_course(course_id)
     number_of_course_questions = get_number_of_course_questions(course_id)
     course_name = get_course_name(course_id)
-    worst_users_dict = {}
-    worst_users_dict = get_users_details(course_id)
-    print('##FROM VIEW##')
+    users_details_dict = {}
+    users_details_dict = get_users_details(course_id)
+    course_answers = User_Answer.objects.filter(course_id=course_id)
+    answers_per_category = get_user_answers_per_category(course_answers)
     template = loader.get_template('quiz/teacher_progress_view.html')
     context = {
             'course_categories': course_categories,
@@ -164,7 +145,8 @@ def teacher_progress_view(request, course_id):
             'course_name': course_name,
             'number_of_students_that_started_answering_questions_in_course': number_of_students_that_started_answering_questions_in_course,
             'number_of_course_questions': number_of_course_questions,
-            'worst_users_dict': worst_users_dict,
+            'users_details_dict': users_details_dict,
+            'answers_per_category': answers_per_category,
     }
     return HttpResponse(template.render(context,request))
 
@@ -208,8 +190,6 @@ def progress(request, user_id, course_id):
                 unique_user_questions.append(user_question.question_id)
 
     user_unsolved_questions_count =len(course_questions) - len(unique_user_questions)
-
-    print('###PERCENTIL GRADES INDEX##')
     percentile, total_users = get_user_percentile(user_id, course_id)
 
     template = loader.get_template('quiz/progress.html')
@@ -288,7 +268,6 @@ def custom_quiz(request, course_id):
             categories.append(request.POST[course_category.category_name])
         except:
             continue
-    print (categories)
     num_of_hard = int(request.POST['hard'])
     num_of_medium = int(request.POST['medium'])
     num_of_easy = int(request.POST['easy'])
@@ -419,10 +398,10 @@ def parse_csv(request, course_id):
             category_id = get_category_id_from_name(row[0])
             if category_id==-1:
                 new_category = add_category(row[0], row[1], course)
-                new_question = add_question(row[2], course, row[3], row[4], new_category)
+                new_question = add_question(row[2], course, datetime.now(), row[4], new_category)
             else:
                 category = Category.objects.get(id=category_id)
-                new_question = add_question(row[2], course, row[3], row[4], category)
+                new_question = add_question(row[2], course, datetime.now(), row[4], category)
             for i in range(0,4):
                 x = 3*i
                 new_answer = add_answer(new_question, row[5+x],row[7+x],row[6+x])
