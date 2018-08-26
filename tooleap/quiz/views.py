@@ -128,6 +128,15 @@ def get_users_details(course_id):
 
     return user_details_dict
 
+def get_latest_quesiton_timestamp(course_answers):
+    most_recent_upload = Question.objects.get(id=course_answers[0].question_id).pub_date
+    for user_answer in course_answers:
+        curr_question = Question.objects.get(id=user_answer.question_id)
+        if most_recent_upload < curr_question.pub_date:
+            most_recent_upload = curr_question.pub_date
+
+    return most_recent_upload
+
 
 def teacher_progress_view(request, course_id):
     course_categories = Category.objects.filter(course_id=course_id)
@@ -137,6 +146,7 @@ def teacher_progress_view(request, course_id):
     users_details_dict = {}
     users_details_dict = get_users_details(course_id)
     course_answers = User_Answer.objects.filter(course_id=course_id)
+    last_quesions_upload = get_latest_quesiton_timestamp(course_answers)
     answers_per_category = get_user_answers_per_category(course_answers)
     template = loader.get_template('quiz/teacher_progress_view.html')
     context = {
@@ -147,6 +157,7 @@ def teacher_progress_view(request, course_id):
             'number_of_course_questions': number_of_course_questions,
             'users_details_dict': users_details_dict,
             'answers_per_category': answers_per_category,
+            'last_quesions_upload': last_quesions_upload,
     }
     return HttpResponse(template.render(context,request))
 
