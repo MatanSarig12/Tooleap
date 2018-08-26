@@ -11,6 +11,8 @@ import csv
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from .forms import UploadFileForm
+from collections import namedtuple
+from django.contrib.auth.models import User
 
 
 ##This generates html for questions for a given course.
@@ -76,17 +78,75 @@ def get_number_of_course_questions(course_id):
     course_questions = get_course_questions(course_id)
     return len(course_questions)
 
-def get_worst_users_list(course_id):
+def get_user_name(user_id):
+    user = User.objects.get(id = user_id)
+    return user.username
+
+def get_user_percentile(user_id, course_id):
+    user_details = get_users_details(course_id)
+    print('IN PERCENTILE')
+    print(user_details)
+    grades = []
+    this_user_grade = 0
+    for user in user_details:
+        print('##PERCENTILE FOR##')
+        print(user_details[user])
+        print(user_details[user]['right_percentage'])
+        if user_id == user:
+            this_user_grade = user_details[user]['right_percentage']
+        else:
+            grades.append(user_details[user]['right_percentage'])
+
+    sorted_grades = sorted(grades)
+
+    user_index = 1
+    for grade in sorted_grades:
+        if this_user_grade >= grade:
+            return user_index
+        else:
+            user_index+=1
+
+    return user_index, len(sorted_grades)+1
+
+
+def get_users_details(course_id):
     ### Dict {user_id: user, num_of_right_answers: num_of_right_answers, num_of_wrong_answers: num_of_wrong_answers, right_answers_percentage: right_answers_percentage, last_log_in: last_log_in}
     unique_users_array = get_unique_students_with_answers_in_course(course_id)
     print(unique_users_array)
     user_detail_list = {}
-    worst_users_list = {}
+    worst_users_list = []
+    worst_users_dict = {}
+
     for unique_user in unique_users_array:
+        print('##IN FOR UNIQUE:##')
+        print(unique_user)
+        course_answers = User_Answer.objects.filter(course_id=course_id,user=unique_user)
         user_detail_list.update({'user_id': unique_user})
-        user_detail_list.update({'user_right_answers': 10})
-    print(user_detail_list)
-    return 0
+        user_name = get_user_name(unique_user)
+        user_detail_list.update({'user_name': user_name})
+        answers_per_difficulty = get_user_answers_per_difficulty(course_answers)
+        hard_right = answers_per_difficulty['Hard'].get('right')
+        hard_false = answers_per_difficulty['Hard'].get('false')
+        medium_right = answers_per_difficulty['Medium'].get('right')
+        medium_false = answers_per_difficulty['Medium'].get('false')
+        easy_right = answers_per_difficulty['Easy'].get('right')
+        easy_false = answers_per_difficulty['Easy'].get('false')
+        all_right = hard_right+medium_right+easy_right
+        all_questions = hard_right+medium_right+easy_right+hard_false+medium_false+easy_false
+        user_detail_list.update({'user_right_answers': all_right})
+        user_detail_list.update({'user_wrong_answers': all_questions - all_right})
+        user_detail_list.update({'user_right_percentage': all_right/all_questions})
+        user_detail_list.update({'user_last_log_in': '2018-09-09 20:00'})
+        print('###USER DETAILS LIST:###')
+        print(user_detail_list)
+
+        worst_users_dict[unique_user] = {'user_name': user_name, 'right_answers': all_right, 'wrong_answers': all_questions - all_right, 'right_percentage':all_right/all_questions, 'recent_log_in': '2018-09-09 20:00'}
+
+    print('##WORST USERS DICT:##')
+    print(worst_users_dict)
+
+    print('##RETURN##')
+    return worst_users_dict
 
 
 def teacher_progress_view(request, course_id):
@@ -94,7 +154,9 @@ def teacher_progress_view(request, course_id):
     number_of_students_that_started_answering_questions_in_course = check_unique_students_with_answers_in_course(course_id)
     number_of_course_questions = get_number_of_course_questions(course_id)
     course_name = get_course_name(course_id)
-    worst_users_list = get_worst_users_list(course_id)
+    worst_users_dict = {}
+    worst_users_dict = get_users_details(course_id)
+    print('##FROM VIEW##')
     template = loader.get_template('quiz/teacher_progress_view.html')
     context = {
             'course_categories': course_categories,
@@ -102,6 +164,7 @@ def teacher_progress_view(request, course_id):
             'course_name': course_name,
             'number_of_students_that_started_answering_questions_in_course': number_of_students_that_started_answering_questions_in_course,
             'number_of_course_questions': number_of_course_questions,
+            'worst_users_dict': worst_users_dict,
     }
     return HttpResponse(template.render(context,request))
 
@@ -112,8 +175,8 @@ def progress(request, user_id, course_id):
     course_answers = User_Answer.objects.filter(course_id=course_id,user=user_id)
     answers_per_quiz = get_user_answers_per_quiz(course_answers)
     answers_per_category = get_user_answers_per_category(course_answers)
-    answers_per_difficulty = get_user_answers_per_difficulty(course_answers)
     course_name = get_course_name(course_id)
+    answers_per_difficulty = get_user_answers_per_difficulty(course_answers)
     hard_right = answers_per_difficulty['Hard'].get('right')
     hard_false = answers_per_difficulty['Hard'].get('false')
     medium_right = answers_per_difficulty['Medium'].get('right')
@@ -146,6 +209,8 @@ def progress(request, user_id, course_id):
 
     user_unsolved_questions_count =len(course_questions) - len(unique_user_questions)
 
+    print('###PERCENTIL GRADES INDEX##')
+    percentile, total_users = get_user_percentile(user_id, course_id)
 
     template = loader.get_template('quiz/progress.html')
     dates = ['2018-01-01','2018-01-02']
@@ -168,6 +233,8 @@ def progress(request, user_id, course_id):
             'tooleap_level': tooleap_level,
             'total_number_of_course_questions': total_number_of_course_questions,
             'user_unsolved_questions_count': user_unsolved_questions_count,
+            'percentile': percentile,
+            'total_users': total_users,
     }
     return HttpResponse(template.render(context,request))
 
@@ -214,35 +281,46 @@ def get_user_answers_per_difficulty(course_answers):
 ##TODO Decompose
 @csrf_exempt
 def custom_quiz(request, course_id):
-    category_name = request.POST['category']
+    categories = []
+    course_categories = Category.objects.filter(course_id=course_id)
+    for course_category in course_categories:
+        try:
+            categories.append(request.POST[course_category.category_name])
+        except:
+            continue
+    print (categories)
     num_of_hard = int(request.POST['hard'])
     num_of_medium = int(request.POST['medium'])
     num_of_easy = int(request.POST['easy'])
     course_name = get_course_name(course_id)
     template = loader.get_template('quiz/custom_quiz.html')
-    category_id = get_category_id_from_name(category_name)
-    questions_list = get_category_questions(category_id)
     final_questions_list = []
-    hard_questions = get_questions_by_difficulty(questions_list,'Hard',num_of_hard)
-    final_questions_list.extend(hard_questions)
-    medium_questions = get_questions_by_difficulty(questions_list,'Medium',num_of_hard)
-    final_questions_list.extend(medium_questions)
-    easy_questions = get_questions_by_difficulty(questions_list,'Easy',num_of_hard)
-    true_num_hard = len(hard_questions)
-    true_num_medium = len(medium_questions)
-    true_num_easy = len(easy_questions)
-    total_number_of_questions = true_num_hard + true_num_medium + true_num_easy
-    final_questions_list.extend(easy_questions)
+    total_number_of_easy_questions = 0
+    total_number_of_medium_questions = 0
+    total_number_of_hard_questions = 0
+    for category in categories:
+        category_id = get_category_id_from_name(category)
+        questions_list = get_category_questions(category_id)
+        hard_questions = get_questions_by_difficulty(questions_list,'Hard',num_of_hard)
+        final_questions_list.extend(hard_questions)
+        medium_questions = get_questions_by_difficulty(questions_list,'Medium',num_of_hard)
+        final_questions_list.extend(medium_questions)
+        easy_questions = get_questions_by_difficulty(questions_list,'Easy',num_of_hard)
+        final_questions_list.extend(easy_questions)
+        total_number_of_easy_questions += len(easy_questions)
+        total_number_of_medium_questions += len(medium_questions)
+        total_number_of_hard_questions += len(hard_questions)
+    total_number_of_questions = total_number_of_easy_questions + total_number_of_medium_questions + total_number_of_hard_questions
     random.shuffle(final_questions_list)
     questions_dict = {}  ## Will have muliple Question Text and Question Answers
     for question in final_questions_list:
         questions_answers_list = Answer.objects.filter(question_id=question.id)
         questions_dict[question.question_text] = questions_answers_list
     context = {
-    'custom_category' : category_name,
-    'true_num_hard' : true_num_hard,
-    'true_num_medium' : true_num_medium,
-    'true_num_easy' : true_num_easy,
+    'custom_categories' : ','.join(categories),
+    'true_num_hard' : total_number_of_hard_questions,
+    'true_num_medium' : total_number_of_medium_questions,
+    'true_num_easy' : total_number_of_easy_questions,
     'total_questions': total_number_of_questions,
     'course_id': course_id,
     'category_id':category_id,
@@ -250,6 +328,7 @@ def custom_quiz(request, course_id):
     'course_name': course_name,
 }
     return HttpResponse(template.render(context, request))
+
 
 ##TODO Decompose
 @csrf_exempt
