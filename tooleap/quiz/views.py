@@ -106,6 +106,30 @@ def get_user_percentile(user_id, course_id):
 
     return user_index, len(sorted_grades)+1
 
+def get_questions_details(course_id):
+    all_course_questions = Question.objects.filter(course_id=course_id)
+    right_answer_counter = 0
+    wrong_answer_counter = 0
+    course_answers_details = {}
+    all_question_user_answers = {}
+    for question in all_course_questions:
+        question_text = question.question_text
+        question_uploaded = question.pub_date
+        all_question_user_answers = User_Answer.objects.filter(question_id=question.id)
+        right_answer_counter = 0
+        wrong_answer_counter = 0
+        for user_answer in all_question_user_answers:
+                if(user_answer.answered_answer_id == user_answer.right_answer_id):
+                    right_answer_counter+=1
+                else:
+                    wrong_answer_counter+=1
+        if(right_answer_counter+wrong_answer_counter == 0):
+            course_answers_details[user_answer.question_id] = {'question_text': question_text, 'right_answers': right_answer_counter, 'wrong_answers':wrong_answer_counter, 'right_percentage':0, 'question_uploaded': question_uploaded}
+        else:
+            course_answers_details[user_answer.question_id] = {'question_text': question_text, 'right_answers': right_answer_counter, 'wrong_answers':wrong_answer_counter, 'right_percentage':round((right_answer_counter/(right_answer_counter+wrong_answer_counter))*100,2), 'question_uploaded': question_uploaded}
+
+    return course_answers_details
+
 
 def get_users_details(course_id):
     unique_users_array = get_unique_students_with_answers_in_course(course_id)
@@ -161,6 +185,7 @@ def teacher_progress_view(request, course_id):
     course_answers = User_Answer.objects.filter(course_id=course_id)
     last_quesions_upload = get_latest_quesiton_timestamp(course_answers)
     answers_per_category = get_user_answers_per_category(course_answers)
+    course_answers_details = get_questions_details(course_id)
     template = loader.get_template('quiz/teacher_progress_view.html')
     context = {
             'course_categories': course_categories,
@@ -171,6 +196,7 @@ def teacher_progress_view(request, course_id):
             'users_details_dict': users_details_dict,
             'answers_per_category': answers_per_category,
             'last_quesions_upload': last_quesions_upload,
+            'course_answers_details': course_answers_details,
     }
     return HttpResponse(template.render(context,request))
 
