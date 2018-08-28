@@ -11,7 +11,6 @@
     <h1>Upload CSV </h1>
     <p> Hi {{ user.username }}! </p>
     <p><a href="/accounts/logout/">logout</a></p>
-    <p> Tooleap / <a href ="/quiz"> Courses </a> / </p>
     <p> Upload Questions and Answers to - Course: {{ course_name }}  </p>
     <form method="post" enctype="multipart/form-data" action="/quiz/teacher/course/{{course_id}}/parse/">
         {% csrf_token %}

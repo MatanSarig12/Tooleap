@@ -7,7 +7,7 @@
   Hi {{ user.username }}!
   <p>Questions Uploaded Sucessfully </p>
   <p> <a href="/quiz/teacher"> Back to Teacher View</a> |
-      <a href="/quiz/teacher/course/{{course.id}}/add_questions"> Upload Additional Questions via CSV </a>
+      <a href="/quiz/teacher/course/{{course_id}}/add_questions"> Upload Additional Questions via CSV </a>
   </p>
   <p><a href="{% url 'logout' %}">logout</a></p>
 {% else %}

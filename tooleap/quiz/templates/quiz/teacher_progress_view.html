@@ -20,10 +20,6 @@
       text-align: left;
       padding: 16px;
   }
-
-  tr:nth-child(even) {
-      background-color: #f2f2f2
-  }
   </style>
 </head>
 <body>
@@ -31,7 +27,6 @@
     <h1 id="titleProgress">Tooleap Teacher Progress View Page </h1>
     <p> Hi {{ user.username }}! </p>
     <p><a href="/accounts/logout/">logout</a></p>
-    <p> Tooleap / <a href ="/quiz/teacher"> Courses </a> / {{course_name}} / View Progress </p>
     <section class="stat">
       <section id="stat1"> Students That Started Answering Questions in Course: {{number_of_students_that_started_answering_questions_in_course}} </section>
       <section id="stat2"> Total Number Of Questions in Course: {{number_of_course_questions}} </section>
@@ -40,26 +35,26 @@
     <table id="myTable">
       <tr>
         <th>Student Name</th>
-        <th onclick="sortTable(1)">Right Answers</th>
-        <th onclick="sortTable(2)">Wrong Answers</th>
-        <th onclick="sortTable(3)">Right Percentage</th>
-        <th>Last Login</th>
+        <th onclick="sortTable(1)">No. of Right Answers</th>
+        <th onclick="sortTable(2)">No. of Wrong Answers</th>
+        <th onclick="sortTable(3)">Percentage of Right Answers</th>
+        <th>Last Quiz By User</th>
       </tr>
       {% for user, details in users_details_dict.items %}
       {% csrf_token %}
+      <!-- {{ forloop.counter }} -->
       <tr>
-          <td>{{details.user_name}} </td>
+          <td> {{details.user_name}} </td>
           <td>{{details.right_answers}}</td>
           <td>{{details.wrong_answers}}</td>
-          <td>{{details.right_percentage}}</td>
-          <td>{{details.recent_log_in}}</td>
+          <td>{{details.right_percentage}} % </td>
+          <td>{{details.latest_quiz}}</td>
       </tr>
 
       {% endfor %}
     </table>
 
-
-    <div class="col-lg-12">
+      <div class="col-lg-12">
                      <div class="panel panel-default">
                          <div class="panel-heading">
                              Category Distribution

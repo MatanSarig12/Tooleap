@@ -40,47 +40,46 @@
 <body>
   <div id="wrapper">
 
-        <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-            <div class="navbar-header">
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
 
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-					<a href="/quiz/course/{{course_id}}/build_quiz"><button type="button" class="btn btn-primary">Create Quiz</button></>
-				  <a href="/quiz/auto_generated/{{course_id}}">	<button type="button" class="btn btn-primary">     Start Random Quiz </button> </a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
 
-          <a class="navbar-brand" href="index.html">Tooleap Progress Page</a>
-            </div>
-            <!-- /.navbar-header -->
+      <a class="navbar-brand" ><img id = "logo" src="{% static 'data/logoTooleap.jpeg' %} "height="45" width="200" > </a>
+      <br><br><br>
+        </div>
+        <!-- /.navbar-header -->
 
-            <ul class="nav navbar-top-links navbar-right">
+        <ul class="nav navbar-top-links navbar-right">
+          <a href="/quiz/course/{{course_id}}/build_quiz"><button type="button" class="btn btn-primary">Create Quiz</button></>
+          <a href="/quiz/auto_generated/{{course_id}}">	<button type="button" class="btn btn-primary">Start Random Quiz </button> </a>
 
-                <!-- /.dropdown -->
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-user">
-                        <li><a href="/"><i class="fa fa-user fa-fw"></i> Profile</a>
-                        </li>
-                        <li><a href="/quiz"><i class="fa fa-gear fa-fw"></i> Courses</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li><a href="/accounts/logout/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
-                        </li>
-                    </ul>
-                    <!-- /.dropdown-user -->
-                </li>
-                <!-- /.dropdown -->
-            </ul>
-            <!-- /.navbar-top-links -->
+            <!-- /.dropdown -->
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    <li><a href="/"><i class="fa fa-user fa-fw"></i> Profile</a>
+                    </li>
+                    <li><a href="/quiz"><i class="fa fa-gear fa-fw"></i> Courses</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li><a href="/accounts/logout/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                    </li>
+                </ul>
+                <!-- /.dropdown-user -->
+            </li>
+            <!-- /.dropdown -->
+        </ul>
+        <!-- /.navbar-top-links -->
 
-        </nav>
-
+    </nav>
         <div id="page-wrapper">
 
                 <div class="col-lg-12">
@@ -98,18 +97,12 @@
                                     <i class="fa fa-check-circle fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div class="huge">{{all_right}}/{{all_questions}}</div>
-                                    <div> Right Answers</div>
+                                    <div> Right Answers:</div>
+                                    <div class="large">{{all_right}}/{{all_questions}}</div>
                                 </div>
                             </div>
                         </div>
-                        <a href="#">
-                            <div class="panel-footer">
-                                <span class="pull-left">View Details</span>
-                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                <div class="clearfix"></div>
-                            </div>
-                        </a>
+
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
@@ -120,18 +113,12 @@
                                     <i class="fa fa-mortar-board fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div class="huge">You Are {{percentile}} out of {{total_users}} Students</div>
-                                    <div>Class percentage</div>
+                                    <div>Place in Class: </div>
+                                    <div class="large"> {{percentile}} out of {{total_users}}</div>
                                 </div>
                             </div>
                         </div>
-                        <a href="#">
-                            <div class="panel-footer">
-                                <span class="pull-left">View Details</span>
-                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                <div class="clearfix"></div>
-                            </div>
-                        </a>
+
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
@@ -142,18 +129,12 @@
                                     <i class="fa fa-bell fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div class="huge">{{user_unsolved_questions_count}} out of {{total_number_of_course_questions}}</div>
-                                    <div>Questions left</div>
+                                    <div>Questions Left:</div>
+                                    <div class="large">{{user_unsolved_questions_count}} out of {{total_number_of_course_questions}}</div>
                                 </div>
                             </div>
                         </div>
-                        <a href="#">
-                            <div class="panel-footer">
-                                <span class="pull-left">View Details</span>
-                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                <div class="clearfix"></div>
-                            </div>
-                        </a>
+
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
@@ -164,30 +145,25 @@
                                     <i class="fa fa-trophy fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div class="huge">{{tooleap_level}}</div>
-                                    <div> Your Tooleap level</div>
+                                    <div>Tooleap Level:</div>
+                                    <div class="large">{%if tooleap_not_started %} NOT STARTED {%endif%}</div>
+                                    <div class="large">{%if tooleap_baby %} BABY {%endif%}</div>
+                                    <div class="large">{%if tooleap_student %} STUDENT {%endif%}</div>
+                                    <div class="large">{%if tooleap_master %} MASTER {%endif%}</div>
+
                                 </div>
                             </div>
                         </div>
-                        <a href="#">
-                            <div class="panel-footer">
-                                <span class="pull-left"></span>
-                                <span class="pull-right">View Details<i class="fa fa-arrow-circle-right"></i></span>
-                                <div class="clearfix"></div>
-                            </div>
-                        </a>
+
                     </div>
                 </div>
 
             <!-- /.row -->
 
             <div class="col-lg-12">
-                             <div class="panel panel-default">
-                                 <div class="panel-heading">
-                                     Category Distribution
-                                 </div>
-                        <!-- /.panel-heading -->
-                        <div id="container1"></div>
+                        <div class="panel panel-default">
+                        <div class="panel-heading">  Category Distribution </div>
+                        <div id="container1"> </div>
                         <script src="https://code.highcharts.com/highcharts.src.js"></script>
                         <script>
                         Highcharts.chart('container1', {
@@ -299,7 +275,7 @@ Highcharts.chart('container2', {
 </div>
 
 
-<div class="col-lg-12">
+<div class="col-lg-4">
                  <div class="panel panel-default">
                      <div class="panel-heading">
                          Hard Quesions Answer Distribution
@@ -356,7 +332,7 @@ Highcharts.chart('container3', {
  </div>
   </div>
 
-  <div class="col-lg-12">
+  <div class="col-lg-4">
                    <div class="panel panel-default">
                        <div class="panel-heading">
                            Medium Quesions Answer Distribution Distribution
@@ -410,7 +386,7 @@ Highcharts.chart('container4', {
 </div>
 </div>
 
-<div class="col-lg-12">
+<div class="col-lg-4">
                  <div class="panel panel-default">
                      <div class="panel-heading">
                          Easy Quesions Answer Distribution

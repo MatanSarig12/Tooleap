@@ -15,7 +15,7 @@ from collections import namedtuple
 from django.contrib.auth.models import User
 from datetime import datetime
 from datetime import timedelta
-
+import math
 ##This generates html for questions for a given course.
 def course_question(request, course_id):
     course_questions_list = Question.objects.filter(course_id=course_id)
@@ -121,12 +121,25 @@ def get_users_details(course_id):
         medium_false = answers_per_difficulty['Medium'].get('false')
         easy_right = answers_per_difficulty['Easy'].get('right')
         easy_false = answers_per_difficulty['Easy'].get('false')
-        all_right = hard_right+medium_right+easy_right
         all_questions = hard_right+medium_right+easy_right+hard_false+medium_false+easy_false
-        login = get_user_last_login(unique_user)
-        user_details_dict[unique_user] = {'user_name': user_name, 'right_answers': all_right, 'wrong_answers': all_questions - all_right, 'right_percentage':all_right/all_questions, 'recent_log_in': login}
+        all_right = hard_right+medium_right+easy_right
+        latest_quiz = get_last_user_quiz(unique_user)
+        user_details_dict[unique_user] = {'user_name': user_name, 'right_answers': all_right, 'wrong_answers': all_questions - all_right, 'right_percentage':round((all_right/all_questions)*100,2), 'latest_quiz': latest_quiz}
 
     return user_details_dict
+
+
+def get_last_user_quiz(user_id):
+    user_answers = User_Answer.objects.filter(user=user_id)
+    most_recent_quiz = user_answers[0].quiz_time
+
+    for user_answer in user_answers:
+        curr_quiz = user_answer.quiz_time
+        if most_recent_quiz < curr_quiz:
+            most_recent_quiz = curr_quiz
+
+    return most_recent_quiz
+
 
 def get_latest_quesiton_timestamp(course_answers):
     most_recent_upload = Question.objects.get(id=course_answers[0].question_id).pub_date
@@ -178,14 +191,19 @@ def progress(request, user_id, course_id):
     easy_false = answers_per_difficulty['Easy'].get('false')
     all_right = hard_right+medium_right+easy_right
     all_questions = hard_right+medium_right+easy_right+hard_false+medium_false+easy_false
+    tooleap_baby = False
+    tooleap_master = False
+    tooleap_not_started= False
+    tooleap_student = False
+
     if total_number_of_course_questions == 0:
-        tooleap_level = 0
+        tooleap_not_started = True
     elif all_right/total_number_of_course_questions <= 0.33:
-        tooleap_level = 1
+        tooleap_baby = True
     elif all_right/total_number_of_course_questions <= 0.66:
-        tooleap_level = 2
+        tooleap_student = True
     else:
-        tooleap_level = 3
+        tooleap_master = True
 
     is_answered = 0
     unique_user_questions = []
@@ -221,11 +239,14 @@ def progress(request, user_id, course_id):
             'easy_false': easy_false,
             'all_right': all_right,
             'all_questions': all_questions,
-            'tooleap_level': tooleap_level,
             'total_number_of_course_questions': total_number_of_course_questions,
             'user_unsolved_questions_count': user_unsolved_questions_count,
             'percentile': percentile,
             'total_users': total_users,
+            'tooleap_baby': tooleap_baby,
+            'tooleap_master': tooleap_master,
+            'tooleap_not_started': tooleap_not_started,
+            'tooleap_student': tooleap_student,
     }
     return HttpResponse(template.render(context,request))
 
@@ -350,11 +371,13 @@ def answers(request,user_id,course_id):
         if arg != 'csrfmiddlewaretoken':
             marked_answers_from_quiz[arg] = request.POST[arg]
     quiz = add_answered_quiz()
-    quiz_checked = check_answer_to_questions(course_id, marked_answers_from_quiz,user_id,quiz.id)
+    quiz_checked,right_questions,total_questions = check_answer_to_questions(course_id, marked_answers_from_quiz,user_id,quiz.id)
     template = loader.get_template('quiz/answers_page.html')
     context = {
         'questions_dict': quiz_checked,
         'course_id': course_id,
+        'right_questions':right_questions,
+        'total_questions': total_questions
     }
     return HttpResponse(template.render(context, request))
 
@@ -419,6 +442,7 @@ def parse_csv(request, course_id):
 
     template = loader.get_template('quiz/questions_added.html')
     context = {
+            'course_id': course_id,
     }
     return HttpResponse(template.render(context, request))
 
@@ -504,6 +528,7 @@ def add_answered_quiz():
 def check_answer_to_questions(course_id, marked_answers_from_quiz, user_id,quiz_id):
     quiz_checked = {}
     course_questions_list = Question.objects.filter(course_id=course_id)
+    right_questions = 0
     for answered_question in marked_answers_from_quiz:
         for quiz_question in course_questions_list:
             if str(answered_question) == str(quiz_question.question_text):
@@ -511,14 +536,15 @@ def check_answer_to_questions(course_id, marked_answers_from_quiz, user_id,quiz_
                 for answer in questions_answers_list:
                     if str(answer.is_right) == 'true' or str(answer.is_right) == ' true':
                         right_answer = answer
+                        if right_answer.answer_text == marked_answers_from_quiz[answered_question]:
+                            right_questions += 1
                     if answer.answer_text == marked_answers_from_quiz[answered_question]:
                         answered_answer_id = answer.id
                 add_user_answer(user_id,quiz_question.id,answered_answer_id,right_answer.id,quiz_id,course_id)
                 quiz_checked[quiz_question.question_text] = {'student_answer':marked_answers_from_quiz[answered_question],
                                                        'correct_answer':right_answer.answer_text}
-    return quiz_checked
-
-
+                break
+    return quiz_checked,right_questions,len(marked_answers_from_quiz)
 
 def jqueryserver(request):
     print ("in jqueryserver")
