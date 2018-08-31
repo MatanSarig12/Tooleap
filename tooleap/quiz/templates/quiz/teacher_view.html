@@ -2,26 +2,128 @@
 <!doctype html>
 <html>
 <head>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="shortcut icon" type="image/png" href="{%static '/favicon.png'%}"/>
 
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
     <title>Tooleap</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- MetisMenu CSS -->
+    <link href="{% static 'vendor/metisMenu/metisMenu.min.css' %}" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{% static 'dist/css/sb-admin-2.css' %}" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
 </head>
+
 <body>
-  {% if user.is_staff %}
-  <h1>Tooleap Course Teacher View</h1>
-  <p> Hi {{ user.username }}! </p>
-  <p><a href="/accounts/logout/">logout</a></p>
-  <p> Tooleap / <a href ="/quiz/teacher"> Courses </a> / Teacher View / </p>
-  <p> <a href="/quiz/teacher/add_course/"> Add New Course </a> </p>
-  <ul>
-  {% for course in courses_list %}
-      <li>Course Name: {{ course.course_name }} | Course Description:  {{ course.course_desc }}
-        <a href="/quiz/teacher/course/{{course.id}}/progress"> View Progress </a>
-        <a href="/quiz/teacher/course/{{course.id}}/add_questions"> Add Questions </a>
-       </li>
-  {% endfor %}
-  </ul>
+      <!-- Navigation -->
+      {% if user.is_staff %}
+      <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+          <div class="navbar-header">
+
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+
+        <a class="navbar-brand" ><img id = "logo" src="{% static 'data/logoTooleap.jpeg' %} "height="45" width="200" > </a>
+        <br><br><br>
+          </div>
+          <!-- /.navbar-header -->
+
+          <ul class="nav navbar-top-links navbar-right">
+            <a href="/quiz/teacher/add_course"><button type="button" class="btn btn-primary">Add New Course</button></>
+
+              <!-- /.dropdown -->
+              <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                      <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                  </a>
+                  <ul class="dropdown-menu dropdown-user">
+                      <li><a href="/"><i class="fa fa-user fa-fw"></i> Profile</a>
+                      </li>
+                      <li><a href="/quiz"><i class="fa fa-gear fa-fw"></i> Courses</a>
+                      </li>
+                      <li class="divider"></li>
+                      <li><a href="/accounts/logout/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                      </li>
+                  </ul>
+                  <!-- /.dropdown-user -->
+              </li>
+              <!-- /.dropdown -->
+          </ul>
+          <!-- /.navbar-top-links -->
+
+      </nav>
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Hi {{ user.username }}! </h1>
+            </div>
+          </div>
+
+            <!-- /.col-lg-12 -->
+
+
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Tooleap Courses
+                    </div>
+                    <!-- .panel-heading -->
+                    <div class="panel-body">
+                        <div class="panel-group" id="accordion">
+                          {% for course in courses_list %}
+                              <!-- <li>Course Name: {{ course.course_name }} | Course Description:  {{ course.course_desc }} <a href="/quiz/course/{{course.id}}/build_quiz">   | Create Quiz  | </a> <a href="/quiz/course/{{course.id}}/progress"> View Progress </a>
+                               <a href="/quiz/course/{{course.id}}/questions"> |  View Questions </a>
+                               <a href="/quiz/course/{{course.id}}/answers"> |  View Answers </a>
+                               <a href="/quiz/auto_generated/{{course.id}}"> | Start Random Quiz </a>
+                               </li> -->
+                               <div class="panel panel-default">
+                                   <div class="panel-heading">
+                                       <h4 class="panel-title">
+                                           <a data-toggle="collapse" data-parent="#accordion" href="#{{course.id}}"> Course Name: {{ course.course_name }}</a>
+                                       </h4>
+                                   </div>
+                                   <div id="{{ course.id }}" class="panel-collapse collapse">
+                                       <div class="panel-body">
+                                          Course Description:  {{ course.course_desc }}       <a href="/quiz/teacher/course/{{course.id}}/progress"> View Progress </a>   <a href="/quiz/teacher/course/{{course.id}}/add_questions"> Add Questions </a>
+                                        </div>
+                                   </div>
+                               </div>
+                          {% endfor %}
+                        </div>
+                    </div>
+                    <!-- .panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+
+
+
+
+    <!-- jQuery -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="{% static 'vendor/metisMenu/metisMenu.min.js' %}"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="{% static 'dist/js/sb-admin-2.js' %}"></script>
+
+
+
   {% else %}
     <p>You are not a teacher </p>
     <a href="/quiz/">Students</a>

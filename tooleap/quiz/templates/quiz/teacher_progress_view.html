@@ -3,8 +3,36 @@
 
 <html>
 <head>
-  <meta charset="utf-8">
   <title>Tooleap - Progress</title>
+  <link rel="shortcut icon" type="image/png" href="{%static '/favicon.png'%}"/>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!-- Bootstrap Core CSS -->
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <!-- MetisMenu CSS -->
+  <link href="{% static 'vendor/metisMenu/metisMenu.min.css' %}" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link href="{% static 'dist/css/sb-admin-2.css' %}" rel="stylesheet">
+  <!-- Custom Fonts -->
+  <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+
+  <!-- Morris Charts CSS -->
+  <link href="{% static 'vendor/morrisjs/morris.css' %}" rel="stylesheet">
+
+
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
   <style>
   table {
       border-spacing: 0;
@@ -24,14 +52,150 @@
 </head>
 <body>
     {% if user.is_staff %}
-    <h1 id="titleProgress">Tooleap Teacher Progress View Page </h1>
-    <p> Hi {{ user.username }}! </p>
-    <p><a href="/accounts/logout/">logout</a></p>
-    <section class="stat">
-      <section id="stat1"> Students That Started Answering Questions in Course: {{number_of_students_that_started_answering_questions_in_course}} </section>
-      <section id="stat2"> Total Number Of Questions in Course: {{number_of_course_questions}} </section>
-      <section id="stat3"> Last Question Uploaded {{last_quesions_upload}} </section>
-    </section>
+    <div id="wrapper">
+
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+      <a class="navbar-brand" ><img id = "logo" src="{% static 'data/logoTooleap.jpeg' %} "height="45" width="200" > </a>
+      <br><br><br>
+        </div>
+        <!-- /.navbar-header -->
+
+        <ul class="nav navbar-top-links navbar-right">
+              <!-- /.dropdown -->
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    <li><a href="/"><i class="fa fa-user fa-fw"></i> Profile</a>
+                    </li>
+                    <li><a href="/quiz"><i class="fa fa-gear fa-fw"></i> Courses</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li><a href="/accounts/logout/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                    </li>
+                </ul>
+                <!-- /.dropdown-user -->
+            </li>
+            <!-- /.dropdown -->
+        </ul>
+        <!-- /.navbar-top-links -->
+
+    </nav>
+
+    <div id="page-wrapper">
+
+                  <div class="col-lg-12">
+                      <h1 class="page-header">Hi {{ user.username }}! </h1>
+                  </div>
+                  <!-- /.col-lg-12 -->
+
+              <!-- /.row -->
+
+                  <div class="col-lg-3 col-md-6">
+                      <div class="panel panel-primary">
+                          <div class="panel-heading">
+                              <div class="row">
+                                  <div class="col-xs-3">
+                                      <i class="fa fa-check-circle fa-5x"></i>
+                                  </div>
+                                  <div class="col-xs-9 text-right">
+                                      <div> Active Students:</div>
+                                      <div class="large">{{number_of_students_that_started_answering_questions_in_course}}</div>
+                                  </div>
+                              </div>
+                          </div>
+
+                      </div>
+                  </div>
+                  <div class="col-lg-3 col-md-6">
+                      <div class="panel panel-green">
+                          <div class="panel-heading">
+                              <div class="row">
+                                  <div class="col-xs-3">
+                                      <i class="fa fa-mortar-board fa-5x"></i>
+                                  </div>
+                                  <div class="col-xs-9 text-right">
+                                      <div>Total Number Of Questions in Course: </div>
+                                      <div class="large">  {{number_of_course_questions}}</div>
+                                  </div>
+                              </div>
+                          </div>
+
+                      </div>
+                  </div>
+                  <div class="col-lg-3 col-md-6">
+                      <div class="panel panel-yellow">
+                          <div class="panel-heading">
+                              <div class="row">
+                                  <div class="col-xs-3">
+                                      <i class="fa fa-bell fa-5x"></i>
+                                  </div>
+                                  <div class="col-xs-9 text-right">
+                                      <div>Last Question Uploaded:</div>
+                                      <div class="large">{{last_quesions_upload}}</div>
+                                  </div>
+                              </div>
+                          </div>
+
+                      </div>
+                  </div>
+
+                  <div class="col-lg-12">
+                                 <div class="panel panel-default">
+                                     <div class="panel-heading">
+                                         Category Distribution
+                                     </div>
+                            <!-- /.panel-heading -->
+                            <div id="container1"></div>
+                            <script src="https://code.highcharts.com/highcharts.src.js"></script>
+                            <script>
+                            Highcharts.chart('container1', {
+                                chart: {
+                                    type: 'column',
+                                    className: 'nift'
+                                },
+                                title: {
+                                    text: 'Answers By Category'
+                                },
+                                xAxis: {
+                                    categories: [
+                                      {% for category, answers in answers_per_category.items %}'{{ category }} '{% if not forloop.last %}, {% endif %}{% endfor %}
+                                    ]
+                                },
+                                series: [{
+                                    name: 'Right',
+                                    data: [
+                                      {% for category, answers in answers_per_category.items %}{{ answers.right }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                    ],
+                                    color: 'green'
+                                }, {
+                                    name: 'False',
+                                    data: [
+                                      {% for category, answers in answers_per_category.items %}{{ answers.false }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                    ],
+                                    color: 'red'
+                                }]
+                            });
+
+                          </script>
+                        </div>
+                        <!-- /.panel -->
+                    </div>
+    <div class="col-lg-12">
+       <div class="panel panel-default">
+                   <div class="panel-heading">
+                       Students Status
+                   </div>
     <table id="myTable">
       <tr>
         <th>Student Name</th>
@@ -53,7 +217,13 @@
 
       {% endfor %}
     </table>
+</div>
 
+    <div class="col-lg-12">
+       <div class="panel panel-default">
+                   <div class="panel-heading">
+                       Question Details
+                   </div>
     <table id="myQuestionsTable">
       <tr>
         <th>Question Text</th>
@@ -75,48 +245,10 @@
 
       {% endfor %}
     </table>
+</div>
+</div>
 
-      <div class="col-lg-12">
-                     <div class="panel panel-default">
-                         <div class="panel-heading">
-                             Category Distribution
-                         </div>
-                <!-- /.panel-heading -->
-                <div id="container1"></div>
-                <script src="https://code.highcharts.com/highcharts.src.js"></script>
-                <script>
-                Highcharts.chart('container1', {
-                    chart: {
-                        type: 'column'
-                    },
-                    title: {
-                        text: 'Answers By Category'
-                    },
-                    xAxis: {
-                        categories: [
-                          {% for category, answers in answers_per_category.items %}'{{ category }} '{% if not forloop.last %}, {% endif %}{% endfor %}
-                        ]
-                    },
-                    series: [{
-                        name: 'Right',
-                        data: [
-                          {% for category, answers in answers_per_category.items %}{{ answers.right }}{% if not forloop.last %}, {% endif %}{% endfor %}
-                        ],
-                        color: 'green'
-                    }, {
-                        name: 'False',
-                        data: [
-                          {% for category, answers in answers_per_category.items %}{{ answers.false }}{% if not forloop.last %}, {% endif %}{% endfor %}
-                        ],
-                        color: 'red'
-                    }]
-                });
-
-              </script>
-            </div>
-            <!-- /.panel -->
-        </div>
-
+</div>
 
 
 <script>
