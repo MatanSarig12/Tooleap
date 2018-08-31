@@ -4,28 +4,108 @@
 <head>
     <meta charset="utf-8">
     <title>Tooleap</title>
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="{% static 'vendor/metisMenu/metisMenu.min.css' %}" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{% static 'dist/css/sb-admin-2.css' %}" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+    <link href="{% static 'vendor/morrisjs/morris.css' %}" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="{%static '/favicon.png'%}"/>
 </head>
 <body>
-    {% if user.is_staff %}
-    <h1>Tooleap - Create New Course</h1>
-    <p> Hi {{ user.username }}! </p>
-    <p><a href="/accounts/logout/">logout</a></p>
-    <p> Tooleap / <a href ="/quiz/teacher"> Courses </a> / Teacher View / New Course </p>
+  <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+      <div class="navbar-header">
+
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+
+    <a class="navbar-brand" ><img id = "logo" src="{% static 'data/logoTooleap.jpeg' %} "height="45" width="200" > </a>
+    <br><br><br>
+      </div>
+      <!-- /.navbar-header -->
+
+      <ul class="nav navbar-top-links navbar-right">
+          <!-- /.dropdown -->
+          <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-user">
+                  <li><a href="/"><i class="fa fa-user fa-fw"></i> Profile</a>
+                  </li>
+                  <li><a href="/quiz/teacher/"><i class="fa fa-mortar-board fa-fw"></i> Courses</a>
+                  </li>
+                  <li class="divider"></li>
+                  <li><a href="/accounts/logout/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                  </li>
+              </ul>
+              <!-- /.dropdown-user -->
+          </li>
+          <!-- /.dropdown -->
+      </ul>
+      <!-- /.navbar-top-links -->
+
+  </nav><br>
+
+    <div class="col-lg-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">
     <form method="post" action="/quiz/teacher/add_course/course_added">
-    <h2> Please Add New Course </h2>
-    <div>
-      <input type="text" name="course_name" placeholder="Please Enter Course Name" id="course_name" > Course Name: <br>
-      <input type="text" name="course_desc" placeholder="Please Enter Course Description" id="course_desc" > Course Description: <br>
-    </div>
+
+              <div class="panel-heading">
+                 <b>Please Add New Course</b>
+              </div>
+              <div class="panel-body">
+                Course Name: <br>
+                <input type="text" name="course_name" size="35" placeholder="Please Enter Course Name" id="course_name" ><br><br>
+                Course Description: <br>
+                <input type="text" name="course_desc" size="35" placeholder="Please Enter Course Description" id="course_desc" >
+
+                <!-- TODO Enter Validations -->
+                <br>
+              </div>
+  <input type="submit" value="Submit">
+            </div>
+            </div>
+            </div>
     <!-- TODO Enter Validations -->
     <br>
-    <br><br><br>
-  <input type="submit" value="Submit">
+    <br>
+
 </form>
-{% else %}
-  <p>You are not a teacher you can't add new course </p>
-  <a href="/quiz/">Students</a>
-{% endif %}
+
+
+<!-- jQuery -->
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap Core JavaScript -->
+<script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+<!-- Metis Menu Plugin JavaScript -->
+<script src="{% static 'vendor/metisMenu/metisMenu.min.js' %}"></script>
+<!-- Custom Theme JavaScript -->
+<script src="{% static 'dist/js/sb-admin-2.js' %}"></script>
+
+
+<!-- Morris Charts JavaScript -->
+<script src="{% static 'vendor/raphael/raphael.min.js' %}"></script>
+<script src="{% static 'vendor/morrisjs/morris.min.js' %}"></script>
+<script src="{% static 'data/morris-data.js' %}"></script>
+
+<script src="{% static 'vendor/flot/excanvas.min.js' %}"></script>
+<script src="{% static 'vendor/flot/jquery.flot.js' %}"></script>
+<script src="{% static 'vendor/flot/jquery.flot.pie.js' %}"></script>
+<script src="{% static 'vendor/flot/jquery.flot.resize.js' %}"></script>
+<script src="{% static 'vendor/flot/jquery.flot.time.js' %}"></script>
+<script src="{% static 'vendor/flot-tooltip/jquery.flot.tooltip.min.js' %}"></script>
+<script src="{% static 'data/flot-data.js' %}"></script>
+
 </body>
 </html>

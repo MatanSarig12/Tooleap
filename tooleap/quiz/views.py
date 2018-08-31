@@ -112,6 +112,7 @@ def get_questions_details(course_id):
     all_question_user_answers = {}
     for question in all_course_questions:
         question_text = question.question_text
+        question_category = question.category_id.category_name
         question_uploaded = question.pub_date
         all_question_user_answers = User_Answer.objects.filter(question_id=question.id)
         right_answer_counter = 0
@@ -123,9 +124,9 @@ def get_questions_details(course_id):
                 wrong_answer_counter+=1
 
         if(right_answer_counter+wrong_answer_counter == 0):
-            course_answers_details[question.id] = {'question_text': question_text, 'right_answers': right_answer_counter, 'wrong_answers':wrong_answer_counter, 'right_percentage':0, 'question_uploaded': question_uploaded}
+            course_answers_details[question.id] = {'question_text': question_text,  'right_answers': right_answer_counter, 'wrong_answers':wrong_answer_counter, 'right_percentage':0, 'question_uploaded': question_uploaded, 'question_category':question_category, 'question_level':question.question_level}
         else:
-            course_answers_details[question.id] = {'question_text': question_text, 'right_answers': right_answer_counter, 'wrong_answers':wrong_answer_counter, 'right_percentage':round((right_answer_counter/(right_answer_counter+wrong_answer_counter))*100,2), 'question_uploaded': question_uploaded}
+            course_answers_details[question.id] = {'question_text': question_text, 'right_answers': right_answer_counter, 'wrong_answers':wrong_answer_counter, 'right_percentage':round((right_answer_counter/(right_answer_counter+wrong_answer_counter))*100,2), 'question_uploaded': question_uploaded, 'question_category':question_category, 'question_level':question.question_level}
 
     return course_answers_details
 
@@ -202,6 +203,49 @@ def teacher_progress_view(request, course_id):
     }
     return HttpResponse(template.render(context,request))
 
+def question_distribution(request, course_id, question_id):
+    print('HERE')
+    question_dict,answers_right_precentage =  get_answers_distribution_per_question(question_id)
+    print(answers_right_precentage)
+    answer_1_text = answers_right_precentage[0][0]
+    answer_1_percentage = answers_right_precentage[0][1]
+    answer_2_text = answers_right_precentage[1][0]
+    answer_2_percentage = answers_right_precentage[1][1]
+    answer_3_text = answers_right_precentage[2][0]
+    answer_3_percentage = answers_right_precentage[2][1]
+    answer_4_text = answers_right_precentage[3][0]
+    answer_4_percentage = answers_right_precentage[3][1]
+
+    template = loader.get_template('quiz/answers_distribution_per_question.html')
+
+    context = {
+            'question_dict': question_dict,
+            'answer_1_text': answer_1_text,
+            'answer_1_percentage': answer_1_percentage,
+            'answer_2_text': answer_2_text,
+            'answer_2_percentage': answer_2_percentage,
+            'answer_3_text': answer_3_text,
+            'answer_3_percentage': answer_3_percentage,
+            'answer_4_text': answer_4_text,
+            'answer_4_percentage': answer_4_percentage,
+            }
+    return HttpResponse(template.render(context,request))
+
+
+
+def get_answers_distribution_per_question(question_id):
+    question = Question.objects.get(id=question_id)
+    question_dict = {'text':question.question_text,
+                    'level':question.question_level,
+                    'category':question.category_id.category_name}
+    answers = Answer.objects.filter(question=question_id)
+    answers_right_precentage = []
+    for answer in answers:
+        user_answers = User_Answer.objects.filter(question_id=question_id,answered_answer_id=answer.id)
+        answers_right_precentage.append([answer.answer_text,len(user_answers)])
+
+    return question_dict,answers_right_precentage
+
 def progress(request, user_id, course_id):
     course_categories = Category.objects.filter(course_id=course_id)
     course_questions = Question.objects.filter(course_id=course_id)
@@ -247,13 +291,15 @@ def progress(request, user_id, course_id):
                 unique_user_questions.append(user_question.question_id)
 
     user_unsolved_questions_count =len(course_questions) - len(unique_user_questions)
-    print ('###############')
-    print (user_id)
-    print (course_id)
     percentile, total_users = get_user_percentile(user_id, course_id)
 
     template = loader.get_template('quiz/progress.html')
     dates = ['2018-01-01','2018-01-02']
+    arr_right_percentage = []
+    for quiz in answers_per_quiz:
+        right_answer_counter = answers_per_quiz[quiz]['right']
+        wrong_answer_counter = answers_per_quiz[quiz]['false']
+        arr_right_percentage.append(round((right_answer_counter/(right_answer_counter+wrong_answer_counter))*100,2))
     context = {
             'course_categories': course_categories,
             'course_id': course_id,
@@ -278,6 +324,7 @@ def progress(request, user_id, course_id):
             'tooleap_master': tooleap_master,
             'tooleap_not_started': tooleap_not_started,
             'tooleap_student': tooleap_student,
+            'arr_right_percentage':arr_right_percentage,
     }
     return HttpResponse(template.render(context,request))
 
@@ -573,7 +620,7 @@ def check_answer_to_questions(course_id, marked_answers_from_quiz, user_id,quiz_
                         answered_answer_id = answer.id
                 add_user_answer(user_id,quiz_question.id,answered_answer_id,right_answer.id,quiz_id,course_id)
                 quiz_checked[quiz_question.question_text] = {'student_answer':marked_answers_from_quiz[answered_question],
-                                                       'correct_answer':right_answer.answer_text}
+                                                       'correct_answer':right_answer.answer_text,'answer_explanation':right_answer.answer_explanation}
                 break
     return quiz_checked,right_questions,len(marked_answers_from_quiz)
 

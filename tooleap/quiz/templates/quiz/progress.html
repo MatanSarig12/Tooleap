@@ -67,7 +67,7 @@
                 <ul class="dropdown-menu dropdown-user">
                     <li><a href="/"><i class="fa fa-user fa-fw"></i> Profile</a>
                     </li>
-                    <li><a href="/quiz"><i class="fa fa-gear fa-fw"></i> Courses</a>
+                    <li><a href="/quiz"><i class="fa fa-mortar-board fa-fw"></i> Courses</a>
                     </li>
                     <li class="divider"></li>
                     <li><a href="/accounts/logout/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
@@ -203,28 +203,23 @@
 <div class="panel-heading">
 Quiz Progress
 </div>
-<div id="container2" style="width:calc(100% - 2px);"></div>
+<div id="container2"></div>
 <script src="https://code.highcharts.com/highcharts.src.js"></script>
 <script>
 
 var arr_dates = []
 var arr_right_ans = []
 var arr_wrong_ans = []
-var arr_right_percentage = []
 
 {% for quiz, answers in answers_per_quiz.items %}
 arr_dates.push("{{answers.quiz_time}}");
-// arr_right_ans.push({{answers.right}});
-// arr_right_ans.push({{answers.false}});
-arr_right_percentage.push({{answers.right}}/({{answers.right}}+{{answers.false}})*100);
 {% endfor %}
 
 
 
 Highcharts.chart('container2', {
     chart: {
-        type: 'area',
-        className: 'nift'
+        type: 'area'
     },
     title: {
         text: 'Progress By Quiz'
@@ -266,7 +261,7 @@ Highcharts.chart('container2', {
     },
     series: [{
         name: 'Percentage Of Right Answers',
-        data: arr_right_percentage
+        data: {{arr_right_percentage}}
     }]
 });
 

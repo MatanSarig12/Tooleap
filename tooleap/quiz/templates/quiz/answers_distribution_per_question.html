@@ -1,0 +1,131 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+  <link rel="shortcut icon" type="image/png" href="{%static '/favicon.png'%}"/>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Tooleap</title>
+
+  <!-- Bootstrap Core CSS -->
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <!-- MetisMenu CSS -->
+  <link href="{% static 'vendor/metisMenu/metisMenu.min.css' %}" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link href="{% static 'dist/css/sb-admin-2.css' %}" rel="stylesheet">
+  <!-- Custom Fonts -->
+  <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+
+  <!-- Morris Charts CSS -->
+  <link href="{% static 'vendor/morrisjs/morris.css' %}" rel="stylesheet">
+
+
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+{{answer_1_text}}
+<body>
+      <!-- Navigation -->
+      {% if user.is_staff %}
+      <div class="col-lg-12">
+      <div class="panel panel-default">
+      <div class="panel-heading">  Answers Distribution </div>
+      <div id="container5"> </div>
+      <script src="https://code.highcharts.com/highcharts.src.js"></script>
+      <script>
+        // var answer_1_text = {{answer_1_text}};
+        // var answer_1_percentage = {{answer_1_percentage}};
+        var answer_1_percentage = {{answer_1_percentage}};
+        var answer_1_text = "{{answer_1_text}}";
+        var answer_2_percentage = {{answer_2_percentage}};
+        var answer_2_text = "{{answer_2_text}}";
+        var answer_3_percentage = {{answer_3_percentage}};
+        var answer_3_text = "{{answer_3_text}}";
+        var answer_4_percentage = {{answer_4_percentage}};
+        var answer_4_text = "{{answer_4_text}}";
+      Highcharts.chart('container5', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+    },
+    title: {
+        text: 'Browser market shares in January, 2018'
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: false
+            },
+            showInLegend: true
+        }
+    },
+    series: [{
+        name: 'Brands',
+        colorByPoint: true,
+        data: [{
+            name: answer_1_text,
+            y: answer_1_percentage
+        }, {
+          name: answer_2_text,
+          y: answer_2_percentage
+        }, {
+          name: answer_3_text,
+          y: answer_3_percentage
+        }, {
+          name: answer_4_text,
+          y: answer_4_percentage
+        }]
+    }]
+});
+
+      </script>
+</div>
+</div>
+    {% else %}
+      <p>You are not a teacher </p>
+      <a href="/quiz/">Students</a>
+    {% endif %}
+
+
+
+    <!-- jQuery -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="{% static 'vendor/metisMenu/metisMenu.min.js' %}"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="{% static 'dist/js/sb-admin-2.js' %}"></script>
+
+
+    <!-- Morris Charts JavaScript -->
+    <script src="{% static 'vendor/raphael/raphael.min.js' %}"></script>
+    <script src="{% static 'vendor/morrisjs/morris.min.js' %}"></script>
+    <script src="{% static 'data/morris-data.js' %}"></script>
+
+	  <script src="{% static 'vendor/flot/excanvas.min.js' %}"></script>
+    <script src="{% static 'vendor/flot/jquery.flot.js' %}"></script>
+    <script src="{% static 'vendor/flot/jquery.flot.pie.js' %}"></script>
+    <script src="{% static 'vendor/flot/jquery.flot.resize.js' %}"></script>
+    <script src="{% static 'vendor/flot/jquery.flot.time.js' %}"></script>
+    <script src="{% static 'vendor/flot-tooltip/jquery.flot.tooltip.min.js' %}"></script>
+    <script src="{% static 'data/flot-data.js' %}"></script>
+  </body>
+  </html>

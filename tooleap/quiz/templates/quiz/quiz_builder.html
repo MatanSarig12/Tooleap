@@ -3,7 +3,6 @@
 <html>
 <head>
     <link rel="shortcut icon" type="image/png" href="{%static '/favicon.png'%}"/>
-
     <meta charset="utf-8">
     <title>Tooleap</title>
     <!-- Bootstrap Core CSS -->
@@ -63,7 +62,7 @@
             <div class="panel-body">
 
               {% for category in course_categories %}
-                  <input type="radio" name="{{ category.category_name }}" id="category{{ forloop.counter }}" value="{{ category.category_name }}" />
+                  <input type="checkbox" name="{{ category.category_name }}" id="category{{ forloop.counter }}" value="{{ category.category_name }}" />
                   <label for="{{ category }}">{{ category }}</label><br>
               {% endfor %}
 

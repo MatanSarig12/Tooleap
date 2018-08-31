@@ -17,5 +17,4 @@ urlpatterns = [
     path('teacher/add_course/course_added', views.course_added, name='course_added'),
     path('teacher/course/<int:course_id>/parse/',views.parse_csv, name ='csv_parse'),
     path('teacher/course/<int:course_id>/add_questions',views.add_questions_csv, name ='add_questions'),
-
 ]
