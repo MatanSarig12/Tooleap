@@ -86,6 +86,7 @@ def get_user_last_login(user_id):
     return user.last_login
 
 def get_user_percentile(user_id, course_id):
+    print ('in function')
     user_details = get_users_details(course_id)
     grades = []
     this_user_grade = 0
@@ -94,16 +95,13 @@ def get_user_percentile(user_id, course_id):
             this_user_grade = user_details[user]['right_percentage']
         else:
             grades.append(user_details[user]['right_percentage'])
-
     sorted_grades = sorted(grades)
-
     user_index = 1
     for grade in sorted_grades:
         if this_user_grade >= grade:
-            return user_index
+            return user_index, len(sorted_grades)+1
         else:
             user_index+=1
-
     return user_index, len(sorted_grades)+1
 
 def get_questions_details(course_id):
@@ -119,14 +117,15 @@ def get_questions_details(course_id):
         right_answer_counter = 0
         wrong_answer_counter = 0
         for user_answer in all_question_user_answers:
-                if(user_answer.answered_answer_id == user_answer.right_answer_id):
-                    right_answer_counter+=1
-                else:
-                    wrong_answer_counter+=1
+            if(user_answer.answered_answer_id == user_answer.right_answer_id):
+                right_answer_counter+=1
+            else:
+                wrong_answer_counter+=1
+
         if(right_answer_counter+wrong_answer_counter == 0):
-            course_answers_details[user_answer.question_id] = {'question_text': question_text, 'right_answers': right_answer_counter, 'wrong_answers':wrong_answer_counter, 'right_percentage':0, 'question_uploaded': question_uploaded}
+            course_answers_details[question.id] = {'question_text': question_text, 'right_answers': right_answer_counter, 'wrong_answers':wrong_answer_counter, 'right_percentage':0, 'question_uploaded': question_uploaded}
         else:
-            course_answers_details[user_answer.question_id] = {'question_text': question_text, 'right_answers': right_answer_counter, 'wrong_answers':wrong_answer_counter, 'right_percentage':round((right_answer_counter/(right_answer_counter+wrong_answer_counter))*100,2), 'question_uploaded': question_uploaded}
+            course_answers_details[question.id] = {'question_text': question_text, 'right_answers': right_answer_counter, 'wrong_answers':wrong_answer_counter, 'right_percentage':round((right_answer_counter/(right_answer_counter+wrong_answer_counter))*100,2), 'question_uploaded': question_uploaded}
 
     return course_answers_details
 
@@ -166,12 +165,15 @@ def get_last_user_quiz(user_id):
 
 
 def get_latest_quesiton_timestamp(course_answers):
-    most_recent_upload = Question.objects.get(id=course_answers[0].question_id).pub_date
-    for user_answer in course_answers:
-        curr_question = Question.objects.get(id=user_answer.question_id)
-        if most_recent_upload < curr_question.pub_date:
-            most_recent_upload = curr_question.pub_date
-
+    try:
+        most_recent_upload = Question.objects.get(id=course_answers[0].question_id).pub_date
+        print (most_recent_upload)
+        for user_answer in course_answers:
+            curr_question = Question.objects.get(id=user_answer.question_id)
+            if most_recent_upload < curr_question.pub_date:
+                most_recent_upload = curr_question.pub_date
+    except:
+        most_recent_upload = None
     return most_recent_upload
 
 
@@ -245,6 +247,9 @@ def progress(request, user_id, course_id):
                 unique_user_questions.append(user_question.question_id)
 
     user_unsolved_questions_count =len(course_questions) - len(unique_user_questions)
+    print ('###############')
+    print (user_id)
+    print (course_id)
     percentile, total_users = get_user_percentile(user_id, course_id)
 
     template = loader.get_template('quiz/progress.html')

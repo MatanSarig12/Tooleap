@@ -4,7 +4,7 @@
 <html lang="en">
 
 <head>
-
+    <link rel="shortcut icon" type="image/png" href="{%static '/favicon.png'%}"/>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -145,16 +145,14 @@
                                     <i class="fa fa-trophy fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div>Tooleap Level:</div>
-                                    <div class="large">{%if tooleap_not_started %} NOT STARTED {%endif%}</div>
-                                    <div class="large">{%if tooleap_baby %} BABY {%endif%}</div>
-                                    <div class="large">{%if tooleap_student %} STUDENT {%endif%}</div>
-                                    <div class="large">{%if tooleap_master %} MASTER {%endif%}</div>
-
+                                  <div>Tooleap Level:</div>
+                                    <div class="large">{%if tooleap_not_started %} <img id = "level1" src="{% static 'data/level1.png' %} "height="50" width="50"> {%endif%}</div>
+                                    <div class="large">{%if tooleap_baby %} <img id = "level1" src="{% static 'data/level1.png' %} "height="50" width="50"> {%endif%}</div>
+                                    <div class="large">{%if tooleap_student %} <img id = "level2" src="{% static 'data/level2.png' %} "height="50" width="50">  {%endif%}</div>
+                                    <div class="large">{%if tooleap_master %}  <img id = "level3" src="{% static 'data/level3.png' %} "height="50" width="50"> {%endif%}</div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
@@ -168,7 +166,8 @@
                         <script>
                         Highcharts.chart('container1', {
                             chart: {
-                                type: 'column'
+                                type: 'column',
+                                className: 'nift'
                             },
                             title: {
                                 text: 'Answers By Category'
@@ -204,7 +203,7 @@
 <div class="panel-heading">
 Quiz Progress
 </div>
-<div id="container2"></div>
+<div id="container2" style="width:calc(100% - 2px);"></div>
 <script src="https://code.highcharts.com/highcharts.src.js"></script>
 <script>
 
@@ -224,7 +223,8 @@ arr_right_percentage.push({{answers.right}}/({{answers.right}}+{{answers.false}}
 
 Highcharts.chart('container2', {
     chart: {
-        type: 'area'
+        type: 'area',
+        className: 'nift'
     },
     title: {
         text: 'Progress By Quiz'
