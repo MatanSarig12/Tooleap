@@ -300,6 +300,7 @@ def progress(request, user_id, course_id):
         right_answer_counter = answers_per_quiz[quiz]['right']
         wrong_answer_counter = answers_per_quiz[quiz]['false']
         arr_right_percentage.append(round((right_answer_counter/(right_answer_counter+wrong_answer_counter))*100,2))
+    user_wrong_answers = get_user_wrong_answers(user_id,course_id)
     context = {
             'course_categories': course_categories,
             'course_id': course_id,
@@ -325,6 +326,7 @@ def progress(request, user_id, course_id):
             'tooleap_not_started': tooleap_not_started,
             'tooleap_student': tooleap_student,
             'arr_right_percentage':arr_right_percentage,
+            'arr_user_wrong_answers':user_wrong_answers,
     }
     return HttpResponse(template.render(context,request))
 
@@ -339,6 +341,27 @@ def get_user_answers_per_quiz(course_answers):
             quizes_answeres[answer.quiz_id]['false'] += 1
     return quizes_answeres
 
+def get_user_wrong_answers(user_id,course_id):
+    user_answers = User_Answer.objects.filter(user=user_id,course_id=course_id)
+    user_agg_answers = {}
+    for question in user_answers:
+        if question.question_id not in user_agg_answers:
+            user_agg_answers[question.question_id] = {'right':0,'false':0}
+        if question.answered_answer_id == question.right_answer_id:
+            user_agg_answers[question.question_id]['right'] += 1
+        else:
+            user_agg_answers[question.question_id]['false'] += 1
+    user_wrong_answers = []
+    for agg_question in user_agg_answers:
+        if user_agg_answers[agg_question]['right'] == 0:
+            question_details = Question.objects.get(id=agg_question)
+            user_wrong_answers.append({'question_text':question_details.question_text,
+                    'wrong_answers':user_agg_answers[agg_question]['false'],
+                    'level':question_details.question_level,
+                    'category':question_details.category_id.category_name,
+                    'question_id':agg_question})
+    return user_wrong_answers
+    
 def get_user_answers_per_category(course_answers):
     category_answers = {}
     for answer in course_answers:
@@ -405,6 +428,9 @@ def custom_quiz(request, course_id):
     for question in final_questions_list:
         questions_answers_list = Answer.objects.filter(question_id=question.id)
         questions_dict[question.question_text] = questions_answers_list
+    if(categories==[]):
+        category_id =0;
+
     context = {
     'custom_categories' : ','.join(categories),
     'true_num_hard' : total_number_of_hard_questions,
@@ -457,6 +483,31 @@ def answers(request,user_id,course_id):
         'right_questions':right_questions,
         'total_questions': total_questions
     }
+    return HttpResponse(template.render(context, request))
+
+@csrf_exempt
+def smart_quiz(request,course_id,user_id):
+    total_number_of_questions = 20 ##TODO Change
+    course_name = get_course_name(course_id)
+    user_wrong_answers = get_user_wrong_answers(user_id,course_id)
+    template = loader.get_template('quiz/smart_quiz.html')
+    course_questions_list = []
+    num_of_questions = 0
+    for question in user_wrong_answers:
+        course_questions_list.append(Question.objects.get(id=question['question_id']))
+        num_of_questions +=1
+        if num_of_questions == total_number_of_questions:
+            break
+    random.shuffle(course_questions_list)
+    questions_dict = {}  ## Will have muliple Question Text and Question Answers
+    for question in course_questions_list:
+        questions_answers_list = Answer.objects.filter(question_id=question.id)
+        questions_dict[question.question_text] = questions_answers_list
+    context = {
+    'course_id': course_id,
+    'questions_dict':questions_dict,
+    'course_name': course_name,
+}
     return HttpResponse(template.render(context, request))
 
 

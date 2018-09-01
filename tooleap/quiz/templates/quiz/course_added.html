@@ -1,29 +1,27 @@
 {% load static %}
-<!doctype html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Tooleap</title>
+
+
     <link rel="shortcut icon" type="image/png" href="{%static '/favicon.png'%}"/>
 
-</head>
-<body>
-    {% if user.is_staff %}
-    <h1>Tooleap - New Course Created </h1>
-    <p> Hi {{ user.username }}! </p>
-    <p><a href="/accounts/logout/">logout</a></p>
-    <p> Tooleap / <a href ="/quiz/teacher"> Courses </a> / Teacher View / New Course / Added Course</p>
-    <h2> The Following Course Was Added Sucessfully </h2>
-    <div>
-      <p>Course ID: {{course_id}} | Course Name: {{course_name}} </p>
-      <p>Course Description: {{course_desc}}</p>
-    </div>
-    <h3> <a href ="/quiz/teacher"> Back To Courses Teacher View </a> </h3>
-    <br>
-    <br><br>
-    {% else %}
-      <p>You are not a teacher </p>
-      <a href="/quiz/">Students</a>
-    {% endif %}
-</body>
-</html>
+
+<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+<!-- MetisMenu CSS -->
+<link href="{% static 'vendor/metisMenu/metisMenu.min.css' %}" rel="stylesheet">
+<!-- Custom CSS -->
+<link href="{% static 'dist/css/sb-admin-2.css' %}" rel="stylesheet">
+<!-- Custom Fonts -->
+<link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+
+<!-- Morris Charts CSS -->
+<link href="{% static 'vendor/morrisjs/morris.css' %}" rel="stylesheet">
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <div class="login-panel panel panel-default">
+                <div class="panel-heading">The course <b style="color:blue;"> {{course_name}} </b> has been Created<br><br>
+                  <p>Course ID: {{course_id}} </p>
+                  <p>Course Description: {{course_desc}}</p>
+                    <a href="/quiz/teacher/course/{{course_id}}/add_questions"><button type="button" class="btn btn-primary">Upload Questions</button></>
+                        <a href="/quiz/teacher"><button type="button" class="btn btn-primary">Back to teacher view</button></>
+</div> </div> </div> </div> </div>

@@ -53,7 +53,7 @@
   </nav>
 <br>
 
-<form method="post" action="/quiz/custom_quiz/{{course_id}}/">
+<form name="quiz_builder" method="post" action="/quiz/custom_quiz/{{course_id}}/" onsubmit="return validateForm()">
     <div class="col-lg-6">
         <div class="panel panel-info">
             <div class="panel-heading">
@@ -82,9 +82,9 @@
 
           <div>
 
-            <input type="text" name="hard" value="3" id="hard" > Number of Hard Questions <br>
-            <input type="text" name="medium" value="3" id="medium" > Number of Medium Questions <br>
-            <input type="text" name="easy" value="3" id="easy" > Number of Easy Questions<br>
+            <input type="number" name="hard" value="3" id="hard" required > Number of Hard Questions <br>
+            <input type="number" name="medium" value="3" id="medium" required > Number of Medium Questions <br>
+            <input type="number" name="easy" value="3" id="easy" required> Number of Easy Questions<br>
           </div>
           <br>
 
@@ -96,7 +96,19 @@
 
   </form>
 
+  <script>
+  function validateForm() {
+      var x = document.forms["quiz_builder"]["hard"].value;
+      var y = document.forms["quiz_builder"]["medium"].value;
+      var z = document.forms["quiz_builder"]["easy"].value;
 
+
+      if (x < 0 || y < 0 || z < 0) {
+          alert("Can't set negative number");
+          return false;
+      }
+  }
+  </script>
 
 
 

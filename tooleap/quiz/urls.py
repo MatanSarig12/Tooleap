@@ -6,6 +6,7 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('course/<int:course_id>/questions', views.course_question, name='course_question'),
+    path('course/<int:course_id>/<int:user_id>/smart_quiz', views.smart_quiz, name='smart_quiz'),
     path('course/<int:course_id>/build_quiz', views.quiz_builder, name='course_categories'),
     path('custom_quiz/<int:course_id>/', views.custom_quiz, name='custom_quiz'),
     path('course/<int:user_id>/<int:course_id>/progress', views.progress, name='progress'),
