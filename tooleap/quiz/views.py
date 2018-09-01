@@ -204,9 +204,9 @@ def teacher_progress_view(request, course_id):
     return HttpResponse(template.render(context,request))
 
 def question_distribution(request, course_id, question_id):
-    print('HERE')
+
     question_dict,answers_right_precentage =  get_answers_distribution_per_question(question_id)
-    print(answers_right_precentage)
+
     answer_1_text = answers_right_precentage[0][0]
     answer_1_percentage = answers_right_precentage[0][1]
     answer_2_text = answers_right_precentage[1][0]
@@ -361,7 +361,7 @@ def get_user_wrong_answers(user_id,course_id):
                     'category':question_details.category_id.category_name,
                     'question_id':agg_question})
     return user_wrong_answers
-    
+
 def get_user_answers_per_category(course_answers):
     category_answers = {}
     for answer in course_answers:
@@ -431,6 +431,10 @@ def custom_quiz(request, course_id):
     if(categories==[]):
         category_id =0;
 
+    if(questions_dict == {}):
+        no_questions = 0;
+    else:
+        no_questions = 1
     context = {
     'custom_categories' : ','.join(categories),
     'true_num_hard' : total_number_of_hard_questions,
@@ -441,6 +445,7 @@ def custom_quiz(request, course_id):
     'category_id':category_id,
     'questions_dict':questions_dict,
     'course_name': course_name,
+    'no_questions': no_questions,
 }
     return HttpResponse(template.render(context, request))
 
@@ -503,10 +508,17 @@ def smart_quiz(request,course_id,user_id):
     for question in course_questions_list:
         questions_answers_list = Answer.objects.filter(question_id=question.id)
         questions_dict[question.question_text] = questions_answers_list
+    if questions_dict == {}:
+        no_questions = False
+    else:
+        no_questions = True
+    print(questions_dict)
+    print(no_questions)
     context = {
     'course_id': course_id,
     'questions_dict':questions_dict,
     'course_name': course_name,
+    'no_questions': no_questions,
 }
     return HttpResponse(template.render(context, request))
 

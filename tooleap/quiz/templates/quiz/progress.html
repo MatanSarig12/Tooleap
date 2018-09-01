@@ -60,7 +60,7 @@
     width: 100%;
 
   }
-#prograss1, #prograss2, #prograss3, #prograss4{
+#progress1, #progress2, #progress3, #progress4{
   margin-top: 80px;
 }
   </style>
@@ -114,7 +114,7 @@
 
             <!-- /.row -->
 
-                <div id="prograss1"class="col-lg-3 col-md-6">
+                <div id="progress1"class="col-lg-3 col-md-6">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <div class="row">
@@ -122,7 +122,7 @@
                                     <i class="fa fa-check-circle fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div> Right Answers:</div>
+                                    <div style=" text-align: left;"><b> Right Answers</b></div>
                                     <div class="large">{{all_right}}/{{all_questions}}</div>
                                 </div>
                             </div>
@@ -130,7 +130,7 @@
 
                     </div>
                 </div>
-                <div id="prograss2" class="col-lg-3 col-md-6">
+                <div id="progress2" class="col-lg-3 col-md-6">
                     <div class="panel panel-green">
                         <div class="panel-heading">
                             <div class="row">
@@ -138,7 +138,7 @@
                                     <i class="fa fa-mortar-board fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div>Place in Class: </div>
+                                    <div style=" text-align: left;"><b>Place in Class</b> </div>
                                     <div class="large"> {{percentile}} out of {{total_users}}</div>
                                 </div>
                             </div>
@@ -146,7 +146,7 @@
 
                     </div>
                 </div>
-                <div id="prograss3" class="col-lg-3 col-md-6">
+                <div id="progress3" class="col-lg-3 col-md-6">
                     <div class="panel panel-yellow">
                         <div class="panel-heading">
                             <div class="row">
@@ -154,7 +154,7 @@
                                     <i class="fa fa-bell fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div>Questions Left:</div>
+                                    <div style=" text-align: left;"><b>Questions Left</b></div>
                                     <div class="large">{{user_unsolved_questions_count}} out of {{total_number_of_course_questions}}</div>
                                 </div>
                             </div>
@@ -162,7 +162,7 @@
 
                     </div>
                 </div>
-                <div id="prograss4" class="col-lg-3 col-md-6">
+                <div id="progress4" class="col-lg-3 col-md-6">
                     <div class="panel panel-red">
                         <div class="panel-heading">
                             <div class="row">
@@ -170,11 +170,11 @@
                                     <i class="fa fa-trophy fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                  <div>Tooleap Level:</div>
-                                    <div class="large">{%if tooleap_not_started %} <img id = "level1" src="{% static 'data/level1.png' %} "height="50" width="50"> {%endif%}</div>
-                                    <div class="large">{%if tooleap_baby %} <img id = "level1" src="{% static 'data/level1.png' %} "height="50" width="50"> {%endif%}</div>
-                                    <div class="large">{%if tooleap_student %} <img id = "level2" src="{% static 'data/level2.png' %} "height="50" width="50">  {%endif%}</div>
-                                    <div class="large">{%if tooleap_master %}  <img id = "level3" src="{% static 'data/level3.png' %} "height="50" width="50"> {%endif%}</div>
+                                  <div style=" text-align: left;"><b>Tooleap Level</b></div>
+                                    <div class="large">{%if tooleap_not_started %} Baby Tooleap   <img id = "level1" src="{% static 'data/level1.png' %} "height="50" width="50"> {%endif%}</div>
+                                    <div class="large">{%if tooleap_baby %}Baby Tooleap<img id = "level1" src="{% static 'data/level1.png' %} "height="50" width="50"> {%endif%}</div>
+                                    <div class="large">{%if tooleap_student %} Student Tooleap <img id = "level2" src="{% static 'data/level2.png' %} "height="50" width="50">  {%endif%}</div>
+                                    <div class="large">{%if tooleap_master %} Master Tooleap <img id = "level3" src="{% static 'data/level3.png' %} "height="50" width="50"> {%endif%}</div>
                                 </div>
                             </div>
                         </div>
@@ -260,6 +260,8 @@ Highcharts.chart('container2', {
         }
     },
     yAxis: {
+      minPadding: 0,
+      maxPadding: 0,
         title: {
             text: 'Percentage Of Right Answers'
         },

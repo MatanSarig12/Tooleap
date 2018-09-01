@@ -50,10 +50,21 @@
   </style>
 </head>
 <body>
+  <style>
+  #navinav{
+    position: fixed;
+    width: 100%;
+    margin-bottom: 20px;
+
+  }
+  #progress1, #progress2, #progress3{
+    margin-top: 80px;
+}
+  </style>
     {% if user.is_staff %}
     <div id="wrapper">
 
-    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+    <nav id="navinav" class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
         <div class="navbar-header">
 
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -69,7 +80,9 @@
         <!-- /.navbar-header -->
 
         <ul class="nav navbar-top-links navbar-right">
-              <!-- /.dropdown -->
+          <a href="/quiz/teacher/add_course"><button type="button" class="btn btn-primary">Add New Course</button></a>
+
+            <!-- /.dropdown -->
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                     <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
@@ -82,6 +95,7 @@
                     <li class="divider"></li>
                     <li><a href="/accounts/logout/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                     </li>
+
                 </ul>
                 <!-- /.dropdown-user -->
             </li>
@@ -93,14 +107,11 @@
 
     <div id="page-wrapper">
 
-                  <div class="col-lg-12">
-                      <h1 class="page-header">Hi {{ user.username }}! </h1>
-                  </div>
-                  <!-- /.col-lg-12 -->
+          <!-- /.col-lg-12 -->
 
               <!-- /.row -->
 
-                  <div class="col-lg-3 col-md-6">
+                  <div id="progress1" class="col-lg-4 col-md-6">
                       <div class="panel panel-primary">
                           <div class="panel-heading">
                               <div class="row">
@@ -108,7 +119,7 @@
                                       <i class="fa fa-check-circle fa-5x"></i>
                                   </div>
                                   <div class="col-xs-9 text-right">
-                                      <div> Active Students:</div>
+                                      <div style=" text-align: left;"> <b>Active Students</b></div>
                                       <div class="large">{{number_of_students_that_started_answering_questions_in_course}}</div>
                                   </div>
                               </div>
@@ -116,7 +127,7 @@
 
                       </div>
                   </div>
-                  <div class="col-lg-3 col-md-6">
+                  <div id="progress2" class="col-lg-4 col-md-6">
                       <div class="panel panel-green">
                           <div class="panel-heading">
                               <div class="row">
@@ -124,7 +135,7 @@
                                       <i class="fa fa-mortar-board fa-5x"></i>
                                   </div>
                                   <div class="col-xs-9 text-right">
-                                      <div>Total Number Of Questions in Course: </div>
+                                      <div style=" text-align: left;"><b>Questions in Course</b> </div>
                                       <div class="large">  {{number_of_course_questions}}</div>
                                   </div>
                               </div>
@@ -132,7 +143,7 @@
 
                       </div>
                   </div>
-                  <div class="col-lg-3 col-md-6">
+                  <div id="progress3" class="col-lg-4 col-md-6">
                       <div class="panel panel-yellow">
                           <div class="panel-heading">
                               <div class="row">
@@ -140,7 +151,7 @@
                                       <i class="fa fa-bell fa-5x"></i>
                                   </div>
                                   <div class="col-xs-9 text-right">
-                                      <div>Last Question Uploaded:</div>
+                                      <div style=" text-align: left;"><b>Last Question Uploaded</b></div>
                                       <div class="large">{{last_quesions_upload}}</div>
                                   </div>
                               </div>
@@ -249,7 +260,7 @@
     </table>
 </div>
 </div>
-
+</div>
 </div>
 
 

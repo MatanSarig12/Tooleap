@@ -16,6 +16,7 @@
 </head>
 </head>
 <body>
+{%if no_questions %}
   <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
       <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -99,7 +100,17 @@
       </div>
 
 </form>
+{%else%}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="login-panel panel panel-default">
+                <div class="panel-heading">You got all the questions up until now right! <br> Please generate new quiz or start a random one: <br> <br>
+                    <a href="/quiz/course/{{course_id}}/build_quiz"><button type="button" class="btn btn-primary">Build Your Quiz</button></>
+                      <a href="/quiz/auto_generated/{{course_id}}"><button type="button" class="btn btn-primary">Random Quiz</button></>
 
+</div> </div> </div> </div> </div>
+{%endif%}
 <!-- jQuery -->
 <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
 <!-- Bootstrap Core JavaScript -->
