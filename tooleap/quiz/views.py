@@ -675,7 +675,7 @@ def check_answer_to_questions(course_id, marked_answers_from_quiz, user_id,quiz_
             if str(answered_question) == str(quiz_question.question_text):
                 questions_answers_list = Answer.objects.filter(question_id=quiz_question.id)
                 for answer in questions_answers_list:
-                    if str(answer.is_right) == 'true' or str(answer.is_right) == ' true':
+                    if str(answer.is_right) == 'true' or str(answer.is_right) == ' true' or str(answer.is_right) == 'TRUE':
                         right_answer = answer
                         if right_answer.answer_text == marked_answers_from_quiz[answered_question]:
                             right_questions += 1
