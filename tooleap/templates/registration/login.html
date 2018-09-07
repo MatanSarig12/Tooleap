@@ -1,12 +1,60 @@
 {% extends 'base.html' %}
+{% load static %}
+<!doctype html>
 
-{% block title %}Login{% endblock %}
 
-{% block content %}
-<h2>Login</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Login</button>
-</form>
-{% endblock %}
+<html>
+<body>
+  {% block content %}
+
+
+<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+<!-- MetisMenu CSS -->
+<link href="{% static 'vendor/metisMenu/metisMenu.min.css' %}" rel="stylesheet">
+<!-- Custom CSS -->
+<link href="{% static 'dist/css/sb-admin-2.css' %}" rel="stylesheet">
+<!-- Custom Fonts -->
+<link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+
+<!-- Morris Charts CSS -->
+<link href="{% static 'vendor/morrisjs/morris.css' %}" rel="stylesheet">
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <div style="margin-top:80px;"" class="login-panel panel panel-default">
+                <div class="panel-heading">
+   Login
+        </div>
+        <!-- /.panel-heading -->
+        <div class="panel-body">
+            <h4>Please login</h4>
+            <br>
+            <div class="tooltip-demo">
+              <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Login</button>
+              </form>
+            </div>
+
+            <br>
+
+
+
+
+
+            </div>
+        </div>
+        <!-- .panel-body -->
+    </div>
+  </div>
+ </div>
+
+
+
+    {% endblock %}
+  </body>
+  </html>
