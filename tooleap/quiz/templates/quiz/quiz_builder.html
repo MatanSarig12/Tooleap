@@ -54,7 +54,7 @@
 <br>
 
 <form name="quiz_builder" method="post" action="/quiz/custom_quiz/{{course_id}}/" onsubmit="return validateForm()">
-    <div class="col-lg-6">
+    <div class="col-lg-12">
         <div class="panel panel-info">
             <div class="panel-heading">
               Select Categories (You Can Choose More Than One)
@@ -63,7 +63,7 @@
 
               {% for category in course_categories %}
                   <input type="checkbox" name="{{ category.category_name }}" id="category{{ forloop.counter }}" value="{{ category.category_name }}" />
-                  <label for="{{ category }}">{{ category }}</label><br>
+                  <label for="{{ category }}">{{ category }} - {{category.category_desc}}</label><br>
               {% endfor %}
 
               <!-- TODO Enter Validations -->
@@ -73,7 +73,7 @@
         </div>
     </div>
 
-<div class="col-lg-6">
+<div class="col-lg-12">
     <div class="panel panel-info">
         <div class="panel-heading">
            Select Number Of Questions In Each Difficulty For All Categories

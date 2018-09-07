@@ -122,7 +122,7 @@
                                     <i class="fa fa-check-circle fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div style=" text-align: left;"><b> Right Answers</b></div>
+                                    <div style=" text-align: left;"><b> {{course_name}} </b> - Right Answers</b></div>
                                     <div class="large">{{all_right}}/{{all_questions}}</div>
                                 </div>
                             </div>
@@ -138,7 +138,7 @@
                                     <i class="fa fa-mortar-board fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div style=" text-align: left;"><b>Place in Class</b> </div>
+                                    <div style=" text-align: left;"><b> {{course_name}} </b> - Place in Class</div>
                                     <div class="large"> {{percentile}} out of {{total_users}}</div>
                                 </div>
                             </div>
@@ -154,7 +154,7 @@
                                     <i class="fa fa-bell fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div style=" text-align: left;"><b>Questions Left</b></div>
+                                    <div style=" text-align: left;"><b> {{course_name}} </b> - Questions Left</div>
                                     <div class="large">{{user_unsolved_questions_count}} out of {{total_number_of_course_questions}}</div>
                                 </div>
                             </div>
@@ -170,9 +170,9 @@
                                     <i class="fa fa-trophy fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                  <div style=" text-align: left;"><b>Tooleap Level</b></div>
+                                  <div style=" text-align: left;"><b> {{course_name}} </b> - Tooleap Level</div>
                                     <div class="large">{%if tooleap_not_started %} Baby Tooleap   <img id = "level1" src="{% static 'data/level1.png' %} "height="50" width="50"> {%endif%}</div>
-                                    <div class="large">{%if tooleap_baby %}Baby Tooleap<img id = "level1" src="{% static 'data/level1.png' %} "height="50" width="50"> {%endif%}</div>
+                                    <div class="large">{%if tooleap_baby %}Baby Tooleap <img id = "level1" src="{% static 'data/level1.png' %} "height="50" width="50"> {%endif%}</div>
                                     <div class="large">{%if tooleap_student %} Student Tooleap <img id = "level2" src="{% static 'data/level2.png' %} "height="50" width="50">  {%endif%}</div>
                                     <div class="large">{%if tooleap_master %} Master Tooleap <img id = "level3" src="{% static 'data/level3.png' %} "height="50" width="50"> {%endif%}</div>
                                 </div>
@@ -185,7 +185,7 @@
 
             <div class="col-lg-12">
                         <div class="panel panel-default">
-                        <div class="panel-heading">  Category Distribution </div>
+                        <div class="panel-heading"> <b> {{course_name}} </b> - Category Distribution </div>
                         <div id="container1"> </div>
                         <script src="https://code.highcharts.com/highcharts.src.js"></script>
                         <script>
@@ -226,7 +226,7 @@
 <div class="col-lg-12">
 <div class="panel panel-default">
 <div class="panel-heading">
-Quiz Progress
+<b> {{course_name}} </b> - Quiz Progress
 </div>
 <div id="container2"></div>
 <script src="https://code.highcharts.com/highcharts.src.js"></script>
@@ -300,7 +300,7 @@ Highcharts.chart('container2', {
 <div class="col-lg-4">
                  <div class="panel panel-default">
                      <div class="panel-heading">
-                         Hard Quesions Answer Distribution
+                        <b> {{course_name}} </b> - Hard Quesions Answer Distribution
                      </div>
 <div id="container3"></div>
 <script src="https://code.highcharts.com/highcharts.src.js"></script>
@@ -357,7 +357,7 @@ Highcharts.chart('container3', {
   <div class="col-lg-4">
                    <div class="panel panel-default">
                        <div class="panel-heading">
-                           Medium Quesions Answer Distribution Distribution
+                        <b> {{course_name}} </b> - Medium Quesions Answer Distribution
                        </div>
 <div id="container4"></div>
 <script src="https://code.highcharts.com/highcharts.src.js"></script>
@@ -411,7 +411,7 @@ Highcharts.chart('container4', {
 <div class="col-lg-4">
                  <div class="panel panel-default">
                      <div class="panel-heading">
-                         Easy Quesions Answer Distribution
+                        <b> {{course_name}} </b> - Easy Quesions Answer Distribution
                      </div>
 <div id="container5"></div>
 <script src="https://code.highcharts.com/highcharts.src.js"></script>
@@ -465,7 +465,7 @@ Highcharts.chart('container5', {
 <div class="col-lg-12">
    <div class="panel panel-default">
                <div class="panel-heading">
-                   Questions You Got Wrong - These Will Be Used in the Smart Quiz
+                  <b> {{course_name}} </b> - Questions You Got Wrong (These Will Be Used in the Smart Quiz)
                </div>
 <table id="myTable">
   <tr>

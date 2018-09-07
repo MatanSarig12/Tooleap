@@ -430,7 +430,7 @@ def custom_quiz(request, course_id):
         questions_dict[question.question_text] = questions_answers_list
     if(categories==[]):
         category_id =0;
-
+    print(questions_dict)
     if(questions_dict == {}):
         no_questions = 0;
     else:
@@ -588,9 +588,11 @@ def parse_csv(request, course_id):
     return HttpResponse(template.render(context, request))
 
 def add_questions_csv(request, course_id):
+    course_name = get_course_name(course_id)
     template = loader.get_template('quiz/add_questions.html')
     context = {
             'course_id': course_id,
+            'course_name': course_name,
     }
     return HttpResponse(template.render(context,request))
 
