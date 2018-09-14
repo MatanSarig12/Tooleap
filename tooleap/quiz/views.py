@@ -415,9 +415,9 @@ def custom_quiz(request, course_id):
         questions_list = get_category_questions(category_id)
         hard_questions = get_questions_by_difficulty(questions_list,'Hard',num_of_hard)
         final_questions_list.extend(hard_questions)
-        medium_questions = get_questions_by_difficulty(questions_list,'Medium',num_of_hard)
+        medium_questions = get_questions_by_difficulty(questions_list,'Medium',num_of_medium)
         final_questions_list.extend(medium_questions)
-        easy_questions = get_questions_by_difficulty(questions_list,'Easy',num_of_hard)
+        easy_questions = get_questions_by_difficulty(questions_list,'Easy',num_of_easy)
         final_questions_list.extend(easy_questions)
         total_number_of_easy_questions += len(easy_questions)
         total_number_of_medium_questions += len(medium_questions)
@@ -430,7 +430,6 @@ def custom_quiz(request, course_id):
         questions_dict[question.question_text] = questions_answers_list
     if(categories==[]):
         category_id =0;
-    print(questions_dict)
     if(questions_dict == {}):
         no_questions = 0;
     else:
