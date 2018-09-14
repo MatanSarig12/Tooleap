@@ -3,7 +3,7 @@
 
 <html>
 <head>
-  <title>Tooleap - Progress</title>
+  <title>Tooleap - Teacher progress</title>
   <link rel="shortcut icon" type="image/png" href="{%static '/favicon.png'%}"/>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -84,19 +84,9 @@
           <a href="/quiz/teacher/course/{{course_id}}/add_questions"><button type="button" class="btn btn-primary">Add Questions</button></a>
             <!-- /.dropdown -->
             <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-user">
-                    <li><a href="/"><i class="fa fa-user fa-fw"></i> Profile</a>
-                    </li>
-                    <li><a href="/quiz"><i class="fa fa-gear fa-fw"></i> Courses</a>
-                    </li>
-                    <li class="divider"></li>
-                    <li><a href="/accounts/logout/"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
-                    </li>
+            <a href="/quiz/teacher/"><i class="fa fa-reply fa-fw"></i> Back</a>
+                                  </a>
 
-                </ul>
                 <!-- /.dropdown-user -->
             </li>
             <!-- /.dropdown -->
@@ -116,7 +106,7 @@
                           <div class="panel-heading">
                               <div class="row">
                                   <div class="col-xs-3">
-                                      <i class="fa fa-check-circle fa-5x"></i>
+                                      <i class="fa fa-users fa-5x"></i>
                                   </div>
                                   <div class="col-xs-9 text-right">
                                       <div style=" text-align: left;"><b> {{course_name}} </b> - Active Students</div>
@@ -132,7 +122,7 @@
                           <div class="panel-heading">
                               <div class="row">
                                   <div class="col-xs-3">
-                                      <i class="fa fa-mortar-board fa-5x"></i>
+                                      <i class="fa fa-file-text-o fa-5x"></i>
                                   </div>
                                   <div class="col-xs-9 text-right">
                                       <div style=" text-align: left;"><b> {{course_name}} </b> - Questions in Course </div>
@@ -148,7 +138,7 @@
                           <div class="panel-heading">
                               <div class="row">
                                   <div class="col-xs-3">
-                                      <i class="fa fa-bell fa-5x"></i>
+                                      <i class="fa fa-calendar fa-5x"></i>
                                   </div>
                                   <div class="col-xs-9 text-right">
                                       <div style=" text-align: left;"><b> {{course_name}} </b> - Last Question Uploaded</div>
