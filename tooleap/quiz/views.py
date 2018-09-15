@@ -165,16 +165,16 @@ def get_last_user_quiz(user_id):
     return most_recent_quiz
 
 
-def get_latest_quesiton_timestamp(course_answers):
-    try:
-        most_recent_upload = Question.objects.get(id=course_answers[0].question_id).pub_date
-        print (most_recent_upload)
-        for user_answer in course_answers:
-            curr_question = Question.objects.get(id=user_answer.question_id)
+def get_latest_quesiton_timestamp(course_id):
+    course_questions = Question.objects.filter(course_id=course_id)
+    if(course_questions == None):
+        return None
+    else:
+        most_recent_upload = course_questions[0].pub_date
+        for question in course_questions:
+            curr_question = question
             if most_recent_upload < curr_question.pub_date:
                 most_recent_upload = curr_question.pub_date
-    except:
-        most_recent_upload = None
     return most_recent_upload
 
 
@@ -186,7 +186,7 @@ def teacher_progress_view(request, course_id):
     users_details_dict = {}
     users_details_dict = get_users_details(course_id)
     course_answers = User_Answer.objects.filter(course_id=course_id)
-    last_quesions_upload = get_latest_quesiton_timestamp(course_answers)
+    last_quesions_upload = get_latest_quesiton_timestamp(course_id)
     answers_per_category = get_user_answers_per_category(course_answers)
     course_answers_details = get_questions_details(course_id)
     template = loader.get_template('quiz/teacher_progress_view.html')
