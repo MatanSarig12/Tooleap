@@ -3,7 +3,7 @@
 
 <html>
 <head>
-  <title>Tooleap - Teacher progress</title>
+  <title>Tooleap - Progress</title>
   <link rel="shortcut icon" type="image/png" href="{%static '/favicon.png'%}"/>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -60,6 +60,15 @@
   #progress1, #progress2, #progress3{
     margin-top: 80px;
 }
+#topics{
+   font-family:cursive;
+   font-size: 25px;
+   text-align: center;
+   margin-top: 7px;
+   color: white;
+   /* -webkit-text-stroke-width: 1px;
+   -webkit-text-stroke-color: black; */
+}
   </style>
     {% if user.is_staff %}
     <div id="wrapper">
@@ -110,7 +119,7 @@
                                   </div>
                                   <div class="col-xs-9 text-right">
                                       <div style=" text-align: left;"><b> {{course_name}} </b> - Active Students</div>
-                                      <div class="large">{{number_of_students_that_started_answering_questions_in_course}}</div>
+                                      <div class="large" id="topics">{{number_of_students_that_started_answering_questions_in_course}}</div>
                                   </div>
                               </div>
                           </div>
@@ -126,7 +135,7 @@
                                   </div>
                                   <div class="col-xs-9 text-right">
                                       <div style=" text-align: left;"><b> {{course_name}} </b> - Questions in Course </div>
-                                      <div class="large">  {{number_of_course_questions}}</div>
+                                      <div class="large" id="topics">  {{number_of_course_questions}}</div>
                                   </div>
                               </div>
                           </div>
@@ -142,7 +151,7 @@
                                   </div>
                                   <div class="col-xs-9 text-right">
                                       <div style=" text-align: left;"><b> {{course_name}} </b> - Last Question Uploaded</div>
-                                      <div class="large">{{last_quesions_upload}}</div>
+                                      <div class="large" id="topics">{{last_quesions_upload}}</div>
                                   </div>
                               </div>
                           </div>
