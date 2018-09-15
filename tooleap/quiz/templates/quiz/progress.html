@@ -63,6 +63,15 @@
 #progress1, #progress2, #progress3, #progress4{
   margin-top: 80px;
 }
+#topics{
+   font-family:cursive;
+   font-size: 25px;
+   text-align: center;
+   margin-top: 7px;
+   color: white;
+   /* -webkit-text-stroke-width: 1px;
+   -webkit-text-stroke-color: black; */
+}
   </style>
   <div id="wrapper">
 
@@ -112,8 +121,8 @@
                                     <i class="fa fa-check-circle fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div style=" text-align: left;"><b> {{course_name}} </b> - Right Answers</b></div>
-                                    <div class="large">{{all_right}}/{{all_questions}}</div>
+                                    <div style=" text-align: left;"><u><b> {{course_name}} </b> - Right Answers</b></u></div>
+                                    <div class="large" id="topics">{{all_right}}/{{all_questions}}</div>
                                 </div>
                             </div>
                         </div>
@@ -128,8 +137,8 @@
                                     <i class="fa fa-institution fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div style=" text-align: left;"><b> {{course_name}} </b> - Place in Class</div>
-                                    <div class="large"> {{percentile}} out of {{total_users}}</div>
+                                    <div style=" text-align: left;"><b> <u>{{course_name}} </b> - Place in Class</u></div>
+                                    <div class="large" id="topics"> {{percentile}} out of {{total_users}}</div>
                                 </div>
                             </div>
                         </div>
@@ -144,8 +153,8 @@
                                     <i class="fa fa-bell fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div style=" text-align: left;"><b> {{course_name}} </b> - Questions Left</div>
-                                    <div class="large">{{user_unsolved_questions_count}} out of {{total_number_of_course_questions}}</div>
+                                    <div style=" text-align: left;"><u><b> {{course_name}} </b> - Questions Left</u></div>
+                                    <div class="large" id="topics">{{user_unsolved_questions_count}} out of {{total_number_of_course_questions}}</div>
                                 </div>
                             </div>
                         </div>
@@ -160,11 +169,11 @@
                                     <i class="fa fa-trophy fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                  <div style=" text-align: left;"><b> {{course_name}} </b> - Tooleap Level</div>
-                                    <div class="large">{%if tooleap_not_started %} Baby Tooleap   <img id = "level1" src="{% static 'data/level1.png' %} "height="50" width="50"> {%endif%}</div>
-                                    <div class="large">{%if tooleap_baby %}Baby Tooleap <img id = "level1" src="{% static 'data/level1.png' %} "height="50" width="50"> {%endif%}</div>
-                                    <div class="large">{%if tooleap_student %} Student Tooleap <img id = "level2" src="{% static 'data/level2.png' %} "height="50" width="50">  {%endif%}</div>
-                                    <div class="large">{%if tooleap_master %} Master Tooleap <img id = "level3" src="{% static 'data/level3.png' %} "height="50" width="50"> {%endif%}</div>
+                                  <div style=" text-align: left;"><u><b> {{course_name}} </b> - Tooleap Level</u></div>
+                                    <div id="topics" class="large">{%if tooleap_not_started %} Baby Tooleap   <img id = "level1" src="{% static 'data/level1.png' %} "height="35" width="35"> {%endif%}</div>
+                                    <div id="topics" class="large">{%if tooleap_baby %}Baby <img id = "level1" src="{% static 'data/level1.png' %} "height="35" width="35"> {%endif%}</div>
+                                    <div id="topics" class="large">{%if tooleap_student %} Average Joe <img id = "level2" src="{% static 'data/level2.png' %} "height="35" width="35">  {%endif%}</div>
+                                    <div id="topics" class="large">{%if tooleap_master %} Master <img id = "level3" src="{% static 'data/level3.png' %} "height="35" width="35"> {%endif%}</div>
                                 </div>
                             </div>
                         </div>
@@ -226,8 +235,8 @@ var arr_dates = []
 var arr_right_ans = []
 var arr_wrong_ans = []
 
-{% for quiz in answers_per_quiz %}
-arr_dates.push("{{quiz.quiz_time}}");
+{% for quiz, answers in answers_per_quiz.items %}
+arr_dates.push("{{answers.quiz_time}}");
 {% endfor %}
 
 
