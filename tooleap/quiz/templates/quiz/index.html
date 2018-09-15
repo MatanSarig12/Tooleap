@@ -32,6 +32,10 @@
 #acordi{
   margin-top: 80px;
 }
+#headTobe{
+  background: #F0FFF0;
+}
+
   </style>
       <!-- Navigation -->
       <nav  id="navinav" class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -81,12 +85,12 @@
         <div class="row">
             <div id="acordi" class="col-lg-12">
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Tooleap Courses
+                    <div id="headTobe" class="panel-heading">
+                      <b>  Tooleap Courses </b>
                     </div>
                     <!-- .panel-heading -->
                     <div class="panel-body">
-                        <div class="panel-group" id="accordion">
+                        <div class="panel-group" id="colcol">
                           {% for course in courses_list %}
                               <!-- <li>Course Name: {{ course.course_name }} | Course Description:  {{ course.course_desc }} <a href="/quiz/course/{{course.id}}/build_quiz">   | Create Quiz  | </a> <a href="/quiz/course/{{course.id}}/progress"> View Progress </a>
                                <a href="/quiz/course/{{course.id}}/questions"> |  View Questions </a>
