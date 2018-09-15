@@ -226,8 +226,8 @@ var arr_dates = []
 var arr_right_ans = []
 var arr_wrong_ans = []
 
-{% for quiz, answers in answers_per_quiz.items %}
-arr_dates.push("{{answers.quiz_time}}");
+{% for quiz in answers_per_quiz %}
+arr_dates.push("{{quiz.quiz_time}}");
 {% endfor %}
 
 

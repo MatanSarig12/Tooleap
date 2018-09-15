@@ -251,7 +251,13 @@ def progress(request, user_id, course_id):
     course_questions = Question.objects.filter(course_id=course_id)
     total_number_of_course_questions = len(course_questions)
     course_answers = User_Answer.objects.filter(course_id=course_id,user=user_id)
-    answers_per_quiz = get_user_answers_per_quiz(course_answers)
+    temp_answers_per_quiz = get_user_answers_per_quiz(course_answers)
+    answers_per_quiz = []
+    for key in sorted(temp_answers_per_quiz):
+        quiz_dict = {'id':key}
+        quiz_dict.update(temp_answers_per_quiz[key])
+        answers_per_quiz.append(quiz_dict)
+    print (answers_per_quiz)
     answers_per_category = get_user_answers_per_category(course_answers)
     course_name = get_course_name(course_id)
     answers_per_difficulty = get_user_answers_per_difficulty(course_answers)
@@ -297,8 +303,9 @@ def progress(request, user_id, course_id):
     dates = ['2018-01-01','2018-01-02']
     arr_right_percentage = []
     for quiz in answers_per_quiz:
-        right_answer_counter = answers_per_quiz[quiz]['right']
-        wrong_answer_counter = answers_per_quiz[quiz]['false']
+        print ("in loop")
+        right_answer_counter = quiz['right']
+        wrong_answer_counter = quiz['false']
         arr_right_percentage.append(round((right_answer_counter/(right_answer_counter+wrong_answer_counter))*100,2))
     user_wrong_answers = get_user_wrong_answers(user_id,course_id)
     context = {
