@@ -86,7 +86,6 @@ def get_user_last_login(user_id):
     return user.last_login
 
 def get_user_percentile(user_id, course_id):
-    print ('in function')
     user_details = get_users_details(course_id)
     grades = []
     this_user_grade = 0
@@ -166,10 +165,11 @@ def get_last_user_quiz(user_id):
 
 
 def get_latest_quesiton_timestamp(course_id):
-    course_questions = Question.objects.filter(course_id=course_id)
-    if(course_questions == None):
+
+    if(Question.objects.filter(course_id=course_id).count() == 0):
         return None
     else:
+        course_questions = Question.objects.filter(course_id=course_id)
         most_recent_upload = course_questions[0].pub_date
         for question in course_questions:
             curr_question = question
@@ -257,7 +257,6 @@ def progress(request, user_id, course_id):
         quiz_dict = {'id':key}
         quiz_dict.update(temp_answers_per_quiz[key])
         answers_per_quiz.append(quiz_dict)
-    print (answers_per_quiz)
     answers_per_category = get_user_answers_per_category(course_answers)
     course_name = get_course_name(course_id)
     answers_per_difficulty = get_user_answers_per_difficulty(course_answers)
@@ -303,7 +302,6 @@ def progress(request, user_id, course_id):
     dates = ['2018-01-01','2018-01-02']
     arr_right_percentage = []
     for quiz in answers_per_quiz:
-        print ("in loop")
         right_answer_counter = quiz['right']
         wrong_answer_counter = quiz['false']
         arr_right_percentage.append(round((right_answer_counter/(right_answer_counter+wrong_answer_counter))*100,2))
@@ -518,8 +516,7 @@ def smart_quiz(request,course_id,user_id):
         no_questions = False
     else:
         no_questions = True
-    print(questions_dict)
-    print(no_questions)
+
     context = {
     'course_id': course_id,
     'questions_dict':questions_dict,
